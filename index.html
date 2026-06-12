@@ -10,6 +10,8 @@
         .page-section { display: none; }
         .page-section.active { display: block; }
     </style>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 </head>
 <body class="bg-slate-50 font-sans text-slate-800 antialiased" onclick="closeProfileDropdown(event)">
 
@@ -256,7 +258,7 @@
                         <div>Siswa: <strong id="res-student-name" class="text-slate-800">-</strong></div>
                         <div>Kelas: <strong id="res-student-kelas" class="text-slate-800">-</strong></div>
                         <div>Ujian: <strong id="res-exam-type" class="text-emerald-700 font-bold uppercase">-</strong></div>
-                        <div>Tanggal: <strong id="res-date" class="text-slate-800">12 Juni 2026</strong></div>
+                        <div>Tanggal: <strong id="res-date" class="text-slate-800">-</strong></div>
                     </div>
 
                     <div class="grid grid-cols-3 gap-3 text-center">
@@ -325,7 +327,11 @@
                                 <th class="p-4">Waktu Ujian</th>
                             </tr>
                         </thead>
-                        <tbody id="tabel-rekap-body" class="divide-y divide-slate-100 font-medium text-slate-700"></tbody>
+                        <tbody id="tabel-rekap-body" class="divide-y divide-slate-100 font-medium text-slate-700">
+                            <tr>
+                                <td colspan="7" class="p-8 text-center text-slate-400 font-medium bg-slate-200/30">Menghubungkan ke cloud database...</td>
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
                 
@@ -338,6 +344,23 @@
     </main>
 
     <script>
+        // ========================================================
+        // 🛰️ KONFIGURASI ASLI PROYEK FIREBASE EDGUGIZI ANDA
+        // ========================================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyDSdq54BdTkn4oR-vA7JAd0aETguTHcGUo",
+            authDomain: "edugizi.firebaseapp.com",
+            projectId: "edugizi",
+            storageBucket: "edugizi.firebasestorage.app",
+            messagingSenderId: "374743986078",
+            appId: "1:374743986078:web:3ebb780f3fa303b140308f"
+        };
+
+        // Inisialisasi Layanan Cloud Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Variabel Global Aplikasi
         let namaSiswa = "";
         let kelasSiswa = "";
         let tipeKuisAktif = "pretest";
@@ -347,12 +370,13 @@
         let nilaiPreTestSiswa = 0;
         let nilaiPostTestSiswa = 0;
         let logoClickCount = 0;
+        let backupDataAdmin = []; // Wadah penampung data untuk fitur ekspor CSV
 
         const databaseMateri = [
-            { title: "1. Pengertian Gizi Seimbang", content: "<p>Gizi seimbang adalah susunan makanan sehari-hari yang mengandung zat gizi dalam jenis and jumlah yang sesuai dengan kebutuhan tubuh, dengan memperhatikan prinsip keanekaragaman pangan, aktivitas fisik, perilaku hidup bersih, and mempertahankan berat badan normal untuk mencegah masalah gizi.</p><p class='font-semibold text-emerald-600 mt-2'>Manfaat Gizi Seimbang:</p><ul class='list-disc pl-4 space-y-0.5'><li>Menjaga kesehatan tubuh</li><li>Mendukung pertumbuhan</li><li>Meningkatkan daya tahan</li></ul>" },
+            { title: "1. Pengertian Gizi Seimbang", content: "<p>Gizi seimbang adalah susunan makanan sehari-hari yang mengandung zat gizi dalam jenis dan jumlah yang sesuai dengan kebutuhan tubuh, dengan memperhatikan prinsip keanekaragaman pangan, aktivitas fisik, perilaku hidup bersih, dan mempertahankan berat badan normal untuk mencegah masalah gizi.</p><p class='font-semibold text-emerald-600 mt-2'>Manfaat Gizi Seimbang:</p><ul class='list-disc pl-4 space-y-0.5'><li>Menjaga kesehatan tubuh</li><li>Mendukung pertumbuhan</li><li>Meningkatkan daya tahan</li></ul>" },
             { title: "2. Zat Gizi", content: "<p>Zat gizi terdiri atas Zat Gizi Makro (Karbohidrat, Protein, Lemak) yang dibutuhkan dalam jumlah besar sebagai sumber energi, serta Zat Gizi Mikro (Vitamin & Mineral) yang mengatur kelancaran fungsi metabolisme sel tubuh.</p>" },
             { title: "3. Pola Makan Sehat Remaja", content: "<p>Remaja membutuhkan asupan kalori efisien karena pertumbuhan fisik berjalan sangat pesat. Menjaga pola makan 3 kali sehari secara teratur membantu konsentrasi belajar tetap optimal.</p>" },
-            { title: "4. Isi Piringku", content: "<p>Slogan pengganti 4 Sehat 5 Sempurna. Mengatur porsi dalam satu piring: 1/3 bagian makanan pokok, 1/3 bagian sayuran, 1/6 bagian lauk-pauk, and 1/6 bagian buah-buahan.</p>" },
+            { title: "4. Isi Piringku", content: "<p>Slogan pengganti 4 Sehat 5 Sempurna. Mengatur porsi dalam satu piring: 1/3 bagian makanan pokok, 1/3 bagian sayuran, 1/6 bagian lauk-pauk, dan 1/6 bagian buah-buahan.</p>" },
             { title: "5. Pentingnya Sarapan", content: "<p>Sarapan membekali energi glukosa bagi otak setelah berpuasa semalaman. Remaja yang rutin sarapan terbukti memiliki performa akademis yang jauh lebih baik di sekolah.</p>" },
             { title: "6. Program Makanan Bergizi Gratis", content: "<p>Program sekolah yang bertujuan memastikan pemerataan kecukupan gizi hewani, energi, dan serat bagi seluruh siswa demi mewujudkan generasi emas Indonesia merdeka stunting.</p>" }
         ];
@@ -380,23 +404,36 @@
             kelasSiswa = document.getElementById("input-kelas").value;
 
             if(namaSiswa && kelasSiswa) {
-                let localData = JSON.parse(localStorage.getItem("edugizi_scores")) || [];
-                let existingRecord = localData.find(item => item.nama.toLowerCase() === namaSiswa.toLowerCase() && item.kelas === kelasSiswa);
-                if(existingRecord) {
-                    nilaiPreTestSiswa = existingRecord.pretest;
-                    nilaiPostTestSiswa = existingRecord.posttest;
-                } else {
-                    nilaiPreTestSiswa = 0;
-                    nilaiPostTestSiswa = 0;
-                }
-
-                document.getElementById("user-display-name").innerText = namaSiswa;
-                document.getElementById("page-login").classList.remove("active");
-                document.getElementById("global-navbar").classList.remove("hidden");
-                document.getElementById("main-content-area").classList.remove("hidden");
+                let docId = `${namaSiswa.toLowerCase().replace(/\s+/g, '_')}-${kelasSiswa.replace(/[^a-zA-Z0-9]/g, '_')}`;
                 
-                navigateTo('home');
-                initMateriSidebar();
+                // Ambil data nilai yang sudah ada di Server Cloud (Sinkronisasi awal)
+                db.collection("rekap_nilai").doc(docId).get().then((doc) => {
+                    if (doc.exists) {
+                        let data = doc.data();
+                        nilaiPreTestSiswa = data.pretest || 0;
+                        nilaiPostTestSiswa = data.posttest || 0;
+                    } else {
+                        nilaiPreTestSiswa = 0;
+                        nilaiPostTestSiswa = 0;
+                    }
+                    
+                    document.getElementById("user-display-name").innerText = namaSiswa;
+                    document.getElementById("page-login").classList.remove("active");
+                    document.getElementById("global-navbar").classList.remove("hidden");
+                    document.getElementById("main-content-area").classList.remove("hidden");
+                    
+                    navigateTo('home');
+                    initMateriSidebar();
+                }).catch(err => {
+                    console.error("Gagal sinkronisasi data cloud awal: ", err);
+                    // Tetap arahkan masuk sebagai fallback aman
+                    document.getElementById("user-display-name").innerText = namaSiswa;
+                    document.getElementById("page-login").classList.remove("active");
+                    document.getElementById("global-navbar").classList.remove("hidden");
+                    document.getElementById("main-content-area").classList.remove("hidden");
+                    navigateTo('home');
+                    initMateriSidebar();
+                });
             }
         }
 
@@ -689,6 +726,9 @@
             renderQuizQuestion();
         }
 
+        // ========================================================
+        // 🚀 PENGIRIMAN DATA REAL-TIME KUIS KE CLOUD DB
+        // ========================================================
         function prosesKalkulasiSkorAkhir() {
             clearInterval(countdownTimer);
 
@@ -705,51 +745,32 @@
                 nilaiPostTestSiswa = nilaiSkor;
             }
 
-            let localData = JSON.parse(localStorage.getItem("edugizi_scores")) || [];
-            let recordIdx = localData.findIndex(item => item.nama.toLowerCase() === namaSiswa.toLowerCase() && item.kelas === kelasSiswa);
-            
-            let waktuSekarang = new Date().toLocaleString('id-ID');
+            let waktuSekarang = new Date().toLocaleString('id-ID') + " WITA";
+            let docId = `${namaSiswa.toLowerCase().replace(/\s+/g, '_')}-${kelasSiswa.replace(/[^a-zA-Z0-9]/g, '_')}`;
 
-            if (recordIdx > -1) {
-                localData[recordIdx].pretest = nilaiPreTestSiswa;
-                localData[recordIdx].posttest = nilaiPostTestSiswa;
-                localData[recordIdx].timestamp = waktuSekarang;
-            } else {
-                localData.push({
-                    nama: namaSiswa,
-                    kelas: kelasSiswa,
-                    pretest: nilaiPreTestSiswa,
-                    posttest: nilaiPostTestSiswa,
-                    waktu: waktuSekarang
-                });
-            }
-            localStorage.setItem("edugizi_scores", JSON.stringify(localData));
-
-            const urlScriptGSheets = "https://script.google.com/macros/s/AKfycbYU53ENxWjUXKlVoN2PFXU-v4j9L1M4y8DCDzCXXEuL_gSCnZVNy4ViezPk_7DVjwGL/exec";
-
-            fetch(urlScriptGSheets, {
-                method: "POST",
-                mode: "no-cors",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    nama: namaSiswa,
-                    kelas: kelasSiswa,
-                    pretest: nilaiPreTestSiswa,
-                    posttest: nilaiPostTestSiswa,
-                    waktu: waktuSekarang
-                })
+            // Simpan data nilai ke Cloud Server Firestore secara langsung
+            db.collection("rekap_nilai").doc(docId).set({
+                nama: namaSiswa,
+                kelas: kelasSiswa,
+                pretest: nilaiPreTestSiswa,
+                posttest: nilaiPostTestSiswa,
+                timestamp: waktuSekarang,
+                waktu_server: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true })
+            .then(() => {
+                console.log("Sinkronisasi sukses! Nilai tersimpan di internet.");
             })
-            .then(() => console.log("Data berhasil dikirim ke Google Sheets!"))
-            .catch(err => console.error("Gagal mengirim data:", err));
+            .catch(err => {
+                console.error("Gagal mengirim ke cloud server: ", err);
+            });
 
+            // Tampilkan komponen halaman hasil ujian di UI
             document.getElementById("res-student-name").innerText = namaSiswa;
             document.getElementById("res-student-kelas").innerText = `Kelas ${kelasSiswa}`;
             document.getElementById("res-exam-type").innerText = tipeKuisAktif;
-            
             document.getElementById("res-score-pre").innerText = nilaiPreTestSiswa;
             document.getElementById("res-score-post").innerText = nilaiPostTestSiswa;
+            document.getElementById("res-date").innerText = waktuSekarang.split(" "); // Hanya ambil tanggalnya saja
             
             let progresPoin = nilaiPostTestSiswa - nilaiPreTestSiswa;
             const diffDisplay = document.getElementById("res-score-diff");
@@ -781,51 +802,65 @@
         function aksesAdminDenganSandi() {
             const pin = prompt("Masukkan Kata Sandi / PIN Keamanan Guru Pembimbing SMAN 1 Parepare:");
             if (pin === "gizi2026" || pin === "admin") {
-                // FIX: Aktifkan area konten utama & sembunyikan halaman login depan
                 document.getElementById("main-content-area").classList.remove("hidden");
                 document.getElementById("page-login").classList.remove("active");
-                
                 navigateTo('admin');
             } else if (pin !== null) {
                 alert("Kata sandi salah! Akses ditolak.");
             }
         }
 
+        // ========================================================
+        // 🛰️ RADAR DASHBOARD GURU REAL-TIME (OTOMATIS SINKRON)
+        // ========================================================
         function renderRekapAdmin() {
             const tbody = document.getElementById("tabel-rekap-body");
-            tbody.innerHTML = "";
 
-            let localData = JSON.parse(localStorage.getItem("edugizi_scores")) || [];
+            // Menggunakan listener onSnapshot agar tabel admin ter-update otomatis saat siswa klik selesai ujian
+            db.collection("rekap_nilai").orderBy("waktu_server", "desc")
+            .onSnapshot((snapshot) => {
+                tbody.innerHTML = "";
+                backupDataAdmin = []; // Kosongkan penampung backup lama
 
-            if (localData.length === 0) {
-                tbody.innerHTML = `<tr><td colspan='7' class='p-8 text-center text-slate-400 font-medium bg-slate-200/30'>Belum ada rekam data nilai siswa yang masuk.</td></tr>`;
-                return;
-            }
+                if (snapshot.empty) {
+                    tbody.innerHTML = `<tr><td colspan='7' class='p-8 text-center text-slate-400 font-medium bg-slate-200/30'>Belum ada rekam data nilai siswa yang masuk di server cloud.</td></tr>`;
+                    return;
+                }
 
-            localData.forEach((item, index) => {
-                let progres = item.posttest - item.pretest;
-                let progresBadge = progres > 0 
-                    ? `<span class='text-emerald-600 font-bold'>+${progres}</span>` 
-                    : `<span class='text-slate-400'>${progres}</span>`;
+                let index = 1;
+                snapshot.forEach((doc) => {
+                    let item = doc.data();
+                    backupDataAdmin.push(item);
 
-                const tr = document.createElement("tr");
-                tr.className = "hover:bg-slate-50 border-b border-slate-100 transition";
-                tr.innerHTML = `
-                    <td class='p-4 font-bold text-slate-400'>${index + 1}</td>
-                    <td class='p-4 font-bold text-slate-800'>${item.nama}</td>
-                    <td class='p-4 text-slate-500'>${item.kelas}</td>
-                    <td class='p-4 text-center text-blue-600 font-bold'>${item.pretest}</td>
-                    <td class='p-4 text-center text-emerald-600 font-bold'>${item.posttest}</td>
-                    <td class='p-4 text-center'>${progresBadge}</td>
-                    <td class='p-4 text-slate-400 font-mono text-[11px]'>${item.timestamp || '-'}</td>
-                `;
-                tbody.appendChild(tr);
+                    let preValue = item.pretest !== undefined ? item.pretest : 0;
+                    let postValue = item.posttest !== undefined ? item.posttest : 0;
+                    let progres = postValue - preValue;
+                    
+                    let progresBadge = progres > 0 
+                        ? `<span class='text-emerald-600 font-bold'>+${progres}</span>` 
+                        : `<span class='text-slate-400'>${progres}</span>`;
+
+                    const tr = document.createElement("tr");
+                    tr.className = "hover:bg-slate-50 border-b border-slate-100 transition";
+                    tr.innerHTML = `
+                        <td class='p-4 font-bold text-slate-400'>${index++}</td>
+                        <td class='p-4 font-bold text-slate-800'>${item.nama}</td>
+                        <td class='p-4 text-slate-500'>${item.kelas}</td>
+                        <td class='p-4 text-center text-blue-600 font-bold'>${preValue}</td>
+                        <td class='p-4 text-center text-emerald-600 font-bold'>${postValue}</td>
+                        <td class='p-4 text-center'>${progresBadge}</td>
+                        <td class='p-4 text-slate-400 font-mono text-[11px]'>${item.timestamp || '-'}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }, (error) => {
+                console.error("Gagal mendengarkan perubahan data Firestore: ", error);
+                tbody.innerHTML = `<tr><td colspan='7' class='p-8 text-center text-red-500 font-medium'>Gagal menyinkronkan database cloud server. Cek aturan Firestore Rules Anda.</td></tr>`;
             });
         }
 
         function eksporDataCSV() {
-            let localData = JSON.parse(localStorage.getItem("edugizi_scores")) || [];
-            if (localData.length === 0) {
+            if (backupDataAdmin.length === 0) {
                 alert("Tidak ada data untuk diekspor!");
                 return;
             }
@@ -834,15 +869,16 @@
             csvContent += "LAPORAN REKAPITULASI DATA NILAI EVALUASI SISWA - EDUGIZI\n";
             csvContent += "SMA NEGERI 1 PAREPARE\n";
             csvContent += `Tanggal Cetak: ${new Date().toLocaleString('id-ID')}\n\n`;
-
             csvContent += "No;Nama Siswa;Kelas;Skor Pre-Test;Skor Post-Test;Progres Poin;Waktu Ujian\n";
 
-            localData.forEach((item, idx) => {
-                let diff = item.posttest - item.pretest;
+            backupDataAdmin.forEach((item, idx) => {
+                let pre = item.pretest !== undefined ? item.pretest : 0;
+                let post = item.posttest !== undefined ? item.posttest : 0;
+                let diff = post - pre;
                 let waktu = item.timestamp ? item.timestamp : "-";
                 let namaBersih = item.nama.replace(/;/g, ",");
                 
-                csvContent += `${idx + 1};"${namaBersih}";"${item.kelas}";${item.pretest};${item.posttest};${diff};"${waktu}"\n`;
+                csvContent += `${idx + 1};"${namaBersih}";"${item.kelas}";${pre};${post};${diff};"${waktu}"\n`;
             });
 
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -856,9 +892,18 @@
         }
 
         function bersihkanSemuaData() {
-            if (confirm("Apakah Anda yakin ingin menghapus SELURUH rekap nilai siswa di perangkat ini? Tindakan ini tidak bisa dibatalkan.")) {
-                localStorage.removeItem("edugizi_scores");
-                renderRekapAdmin();
+            if (confirm("Apakah Anda yakin ingin menghapus SELURUH data rekap nilai siswa di SERVER CLOUD INTERNET? Tindakan ini tidak bisa dibatalkan.")) {
+                db.collection("rekap_nilai").get().then((snapshot) => {
+                    let batch = db.batch();
+                    snapshot.forEach((doc) => {
+                        batch.delete(doc.ref);
+                    });
+                    return batch.commit();
+                }).then(() => {
+                    alert("Seluruh rekaman data di server cloud berhasil dikosongkan!");
+                }).catch(err => {
+                    alert("Gagal menghapus database cloud: " + err);
+                });
             }
         }
 
@@ -876,7 +921,7 @@
         }
 
         function handleLogout() {
-            if (confirm("Apakah Anda yakin ingin keluar dari sistem?")) {
+            if (confirm("Apakah Anda yakin ingin keluar dari aplikasi?")) {
                 namaSiswa = "";
                 kelasSiswa = "";
                 nilaiPreTestSiswa = 0;
@@ -887,7 +932,6 @@
 
                 document.getElementById("global-navbar").classList.add("hidden");
                 document.getElementById("main-content-area").classList.add("hidden");
-                document.getElementById("page-login").classList.add("active");
                 
                 const sections = document.querySelectorAll(".page-section");
                 sections.forEach(sec => sec.classList.remove("active"));

@@ -572,7 +572,6 @@
                 container.appendChild(btn);
             });
         }
-
 function showQuizQuestion(idx) {
     currentQuizIndex = idx;
     document.getElementById('quiz-header-index').innerText = `Soal ${idx + 1} dari ${databaseSoal.length}`;
@@ -594,10 +593,11 @@ function showQuizQuestion(idx) {
     optBox.innerHTML = "";
     
     const feedbackBox = document.getElementById('quiz-feedback-box');
-    feedbackBox.classList.add('hidden');
+    feedbackBox.classList.add('hidden'); // Sembunyikan feedback secara default
 
     const huruf = ['A', 'B', 'C', 'D'];
     
+    // Cek apakah soal ini sudah dijawab
     const sudahDijawab = jawabanSiswa[idx] !== null;
 
     data.o.forEach((opt, oIdx) => {
@@ -605,9 +605,9 @@ function showQuizQuestion(idx) {
         const apakahBenar = oIdx === data.c;
         
         const optBtn = document.createElement('button');
-        optBtn.disabled = sudahDijawab && tipeKuisAktif === 'posttest'; 
+        optBtn.disabled = sudahDijawab && tipeKuisAktif === 'posttest'; // Kunci jawaban di Post-Test setelah dipilih
         
- l
+        // Atur warna default awal
         let btnClass = "bg-slate-50/50 border-slate-200 text-slate-700 hover:bg-slate-50";
         let badgeClass = "text-slate-400 border-slate-200";
 
@@ -616,12 +616,14 @@ function showQuizQuestion(idx) {
             badgeClass = "text-emerald-600 border-emerald-400";
         }
 
+        // FITUR KOREKSI OTOMATIS: Jika ini Post-Test dan sudah dijawab, tunjukkan warna interaktif
         if (tipeKuisAktif === 'posttest' && sudahDijawab) {
             if (apakahBenar) {
+                // Kunci Jawaban yang Benar (Hijau)
                 btnClass = "bg-emerald-100 border-emerald-500 text-emerald-900 font-bold pointer-events-none";
                 badgeClass = "bg-emerald-600 text-white border-emerald-600";
             } else if (terpilih && !apakahBenar) {
-            
+                // Pilihan Siswa yang Salah (Merah)
                 btnClass = "bg-rose-100 border-rose-500 text-rose-900 font-bold pointer-events-none";
                 badgeClass = "bg-rose-600 text-white border-rose-600";
             } else {
@@ -639,6 +641,7 @@ function showQuizQuestion(idx) {
         optBox.appendChild(optBtn);
     });
 
+    // TAMPILKAN TEKS KETERANGAN JIKA SALAH/BENAR (Khusus Post-Test)
     if (tipeKuisAktif === 'posttest' && sudahDijawab) {
         const jawabanBenarSiswa = jawabanSiswa[idx] === data.c;
         feedbackBox.classList.remove('hidden');
@@ -658,6 +661,7 @@ function showQuizQuestion(idx) {
     document.getElementById('btn-quiz-prev').disabled = (idx === 0);
     document.getElementById('btn-quiz-action').innerText = (idx === databaseSoal.length - 1) ? "Kirim Ujian ✓" : "Soal Berikutnya ›";
 }
+        
         function navigateQuizQuestion(dir) {
             let target = currentQuizIndex + dir;
             if(target >= 0 && target < databaseSoal.length) showQuizQuestion(target);
@@ -706,7 +710,7 @@ function showQuizQuestion(idx) {
             navigateTo('result');
         }
 
-
+        // --- DUA ARAH DATA: CLOUD GOOGLE SPREADSHEET ---
         async function kirimSkorKeServer(skor) {
             try {
                 await fetch(SCRIPT_URL, {
@@ -771,6 +775,7 @@ function showQuizQuestion(idx) {
             clearInterval(adminIntervalTimer);
         }
 
+        // --- DROPDOWN & LOGOUT ---
         function toggleProfileDropdown(e) {
             e.stopPropagation();
             document.getElementById('profile-dropdown-menu').classList.toggle('hidden');

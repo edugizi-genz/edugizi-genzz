@@ -4,11 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EduGizi - Kuis Interaktif Gizi</title>
+    <!-- Tailwind CSS v4 & FontAwesome -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
 
+    <!-- TOP NAVBAR -->
     <header class="bg-gradient-to-r from-emerald-600 to-teal-700 text-white shadow-md sticky top-0 z-50">
         <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center space-x-2">
@@ -22,59 +24,45 @@
         </div>
     </header>
 
+    <!-- MAIN CONTAINER -->
     <main class="flex-grow max-w-4xl w-full mx-auto p-4 md:py-8 flex flex-col justify-center">
         
-        <section id="login-screen" class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden max-w-md w-full mx-auto transition-all duration-300">
-            <div class="flex bg-slate-100 border-b border-slate-200">
-                <button onclick="switchLoginMode('siswa')" id="tab-siswa" class="w-1/2 py-3 text-center font-semibold text-emerald-600 border-b-2 border-emerald-600 bg-white transition-all">
-                    <i class="fa-solid fa-user-graduate mr-2"></i>Siswa
-                </button>
-                <button onclick="switchLoginMode('guru')" id="tab-guru" class="w-1/2 py-3 text-center font-semibold text-slate-500 hover:text-slate-700 transition-all">
-                    <i class="fa-solid fa-user-tie mr-2"></i>Guru / Admin
+        <!-- 1. LOGIN SCREEN (VERSI AWAL DENGAN AKSES GURU DI BAWAH) -->
+        <section id="login-screen" class="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 md:p-8 max-w-md w-full mx-auto transition-all duration-300">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold text-slate-800">Selamat Datang di EduGizi</h2>
+                <p class="text-slate-500 text-sm mt-1">Silakan isi identitas untuk memulai kuis gizi</p>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-600 mb-1">Nama Lengkap</label>
+                    <input type="text" id="siswa-name" placeholder="Masukkan nama lengkapmu..." class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-600 mb-1">Kelas</label>
+                    <select id="siswa-class" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all bg-white">
+                        <option value="">-- Pilih Kelas --</option>
+                        <option value="X-1">X - 1</option>
+                        <option value="X-2">X - 2</option>
+                        <option value="XI-1">XI - 1</option>
+                        <option value="XI-2">XI - 2</option>
+                    </select>
+                </div>
+                <button onclick="startSiswaFlow()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-xl shadow-md transition-all transform active:scale-98 mt-2 cursor-pointer">
+                    Mulai Ujian <i class="fa-solid fa-arrow-right ml-2"></i>
                 </button>
             </div>
 
-            <div class="p-6 md:p-8">
-                <div class="text-center mb-6">
-                    <h2 id="login-title" class="text-2xl font-bold text-slate-800">Selamat Datang di EduGizi</h2>
-                    <p id="login-subtitle" class="text-slate-500 text-sm mt-1">Silakan isi identitas untuk memulai kuis gizi</p>
-                </div>
-
-                <div id="form-siswa" class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-slate-600 mb-1">Nama Lengkap</label>
-                        <input type="text" id="siswa-name" placeholder="Masukkan nama lengkapmu..." class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-600 mb-1">Kelas</label>
-                        <select id="siswa-class" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all bg-white">
-                            <option value="">-- Pilih Kelas --</option>
-                            <option value="X-1">X - 1</option>
-                            <option value="X-2">X - 2</option>
-                            <option value="XI-1">XI - 1</option>
-                            <option value="XI-2">XI - 2</option>
-                        </select>
-                    </div>
-                    <button onclick="startSiswaFlow()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 rounded-xl shadow-md transition-all transform active:scale-98 mt-2 cursor-pointer">
-                        Mulai Ujian <i class="fa-solid fa-arrow-right ml-2"></i>
-                    </button>
-                </div>
-
-                <div id="form-guru" class="space-y-4 hidden">
-                    <div>
-                        <label class="block text-sm font-medium text-slate-600 mb-1">Kata Sandi Admin</label>
-                        <div class="relative">
-                            <i class="fa-solid fa-lock absolute left-3.5 top-3.5 text-slate-400"></i>
-                            <input type="password" id="guru-password" placeholder="Masukkan password guru..." class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all">
-                        </div>
-                    </div>
-                    <button onclick="startGuruFlow()" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-semibold py-3 rounded-xl shadow-md transition-all transform active:scale-98 mt-2 cursor-pointer">
-                        Masuk Dashboard Guru <i class="fa-solid fa-gauge ml-2"></i>
-                    </button>
-                </div>
+            <!-- TOMBOL RAHASIA AKSES GURU DI SINI -->
+            <div class="mt-6 pt-4 border-t border-slate-100 text-center">
+                <button onclick="promptGuruPassword()" class="text-xs text-slate-400 hover:text-teal-600 transition-all font-medium cursor-pointer">
+                    <i class="fa-solid fa-user-shield mr-1"></i> Masuk Halaman Guru / Admin
+                </button>
             </div>
         </section>
 
+        <!-- 2. QUIZ INTERFACE SCREEN -->
         <section id="quiz-screen" class="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 md:p-8 hidden max-w-2xl w-full mx-auto">
             <div class="flex justify-between items-center mb-4 bg-slate-50 p-3 rounded-xl">
                 <span id="quiz-stage-badge" class="bg-emerald-100 text-emerald-800 font-bold px-3 py-1 rounded-full text-xs tracking-wider uppercase">Pre-Test</span>
@@ -86,9 +74,7 @@
             </div>
 
             <h3 id="question-text" class="text-lg md:text-xl font-bold text-slate-800 mb-6">Loading pertanyaan...</h3>
-
-            <div id="options-container" class="space-y-3">
-                </div>
+            <div id="options-container" class="space-y-3"></div>
 
             <div class="mt-8 flex justify-end">
                 <button id="next-btn" onclick="submitAnswer()" disabled class="bg-slate-300 text-slate-500 font-semibold px-6 py-2.5 rounded-xl shadow transition-all cursor-not-allowed">
@@ -97,9 +83,10 @@
             </div>
         </section>
 
+        <!-- 3. SCORE RESULT SCREEN -->
         <section id="result-screen" class="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 md:p-8 hidden max-w-md w-full mx-auto text-center">
             <div class="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 text-4xl shadow-inner">
-                <i class="fa-solid fa-circle-check animate-pulse"></i>
+                <i class="fa-solid fa-circle-check"></i>
             </div>
             <h2 class="text-2xl font-bold text-slate-800 mb-1">Ujian Selesai!</h2>
             <p class="text-slate-500 text-sm mb-6">Data nilai kamu berhasil diamankan ke server cloud.</p>
@@ -125,6 +112,7 @@
             </button>
         </section>
 
+        <!-- 4. GURU / ADMIN DASHBOARD SCREEN -->
         <section id="guru-screen" class="bg-white rounded-2xl shadow-xl border border-slate-100 p-6 hidden w-full">
             <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-slate-100 pb-4 mb-4 gap-4">
                 <div>
@@ -156,8 +144,7 @@
                             <th class="py-3.5 px-4 text-center">Waktu Ujian</th>
                         </tr>
                     </thead>
-                    <tbody id="database-tbody" class="text-sm divide-y divide-slate-100 text-slate-600 font-medium">
-                        </tbody>
+                    <tbody id="database-tbody" class="text-sm divide-y divide-slate-100 text-slate-600 font-medium"></tbody>
                 </table>
             </div>
 
@@ -170,17 +157,18 @@
 
     </main>
 
+    <!-- FOOTER -->
     <footer class="bg-slate-100 border-t border-slate-200 text-center py-3.5 text-xs text-slate-400 font-medium">
         &copy; 2026 EduGizi - Media Edukasi Gizi Seimbang Generasi Z. All Rights Reserved.
     </footer>
 
+    <!-- FIREBASE & CORE SYSTEM SCRIPTS -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Konfigurasi Firebase Anda (Sudah Di-link)
         const firebaseConfig = {
-            apiKey: "AIzaSyC2V2O9y1k4e3P5d6X7z8W9v0u1_K2L3M", // Firebase akan mengenali ini lewat Rules Publik
+            apiKey: "AIzaSyC2V2O9y1k4e3P5d6X7z8W9v0u1_K2L3M", 
             authDomain: "edugizi-genz.firebaseapp.com",
             projectId: "edugizi-genz",
             storageBucket: "edugizi-genz.appspot.com",
@@ -191,7 +179,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // BANK DATA SOAL KUIS (5 Soal Utama EduGizi)
         const quizQuestions = [
             { q: "Manakah makanan di bawah ini yang merupakan sumber protein hewani terbaik?", o: ["Nasi Putih", "Telur dan Ikan", "Tempe dan Tahu", "Sayur Bayam"], a: 1 },
             { q: "Apa dampak buruk yang paling sering timbul jika remaja sering melewatkan sarapan pagi?", o: ["Tubuh makin berotot", "Sulit berkonsentrasi belajar", "Gigi menjadi berlubang", "Tinggi badan melonjak"], a: 1 },
@@ -200,10 +187,8 @@
             { q: "Berapakah anjuran minum air putih yang ideal bagi tubuh remaja dalam satu hari?", o: ["1 - 2 Gelas", "3 - 5 Gelas", "Minimal 8 Gelas", "Cukup 1 Liter"], a: 2 }
         ];
 
-        // VARIABEL STATE SISTEM
-        let currentMode = 'siswa'; 
         let studentData = { name: '', class: '' };
-        let currentStage = 'pre'; // 'pre' atau 'post'
+        let currentStage = 'pre'; 
         let currentQuestionIdx = 0;
         let selectedOptionIdx = null;
         let preTestScore = 0;
@@ -211,34 +196,7 @@
         let rawAnswers = [];
         let firestoreUnsubscribe = null;
 
-        // FUNGSI GANTI TAB LOGIN
-        window.switchLoginMode = function(mode) {
-            currentMode = mode;
-            const tSiswa = document.getElementById('tab-siswa');
-            const tGuru = document.getElementById('tab-guru');
-            const fSiswa = document.getElementById('form-siswa');
-            const fGuru = document.getElementById('form-guru');
-            const title = document.getElementById('login-title');
-            const subtitle = document.getElementById('login-subtitle');
-
-            if(mode === 'siswa') {
-                tSiswa.className = "w-1/2 py-3 text-center font-semibold text-emerald-600 border-b-2 border-emerald-600 bg-white transition-all";
-                tGuru.className = "w-1/2 py-3 text-center font-semibold text-slate-500 hover:text-slate-700 transition-all";
-                fSiswa.classList.remove('hidden');
-                fGuru.classList.add('hidden');
-                title.innerText = "Selamat Datang di EduGizi";
-                subtitle.innerText = "Silakan isi identitas untuk memulai kuis gizi";
-            } else {
-                tGuru.className = "w-1/2 py-3 text-center font-semibold text-teal-600 border-b-2 border-teal-600 bg-white transition-all";
-                tSiswa.className = "w-1/2 py-3 text-center font-semibold text-slate-500 hover:text-slate-700 transition-all";
-                fGuru.classList.remove('hidden');
-                fSiswa.classList.add('hidden');
-                title.innerText = "Portal Guru & Admin";
-                subtitle.innerText = "Masukkan kunci pengaman untuk melihat database nilai";
-            }
-        }
-
-        // PROSES LOGIN SISWA
+        // LOGIN SISWA
         window.startSiswaFlow = function() {
             const nameVal = document.getElementById('siswa-name').value.trim();
             const classVal = document.getElementById('siswa-class').value;
@@ -251,41 +209,37 @@
             studentData.name = nameVal;
             studentData.class = classVal;
 
-            // Update Header Navbar
             document.getElementById('display-username').innerText = `${nameVal} (${classVal})`;
             document.getElementById('user-indicator').classList.remove('hidden');
 
-            // Pindah Layar ke Kuis
             document.getElementById('login-screen').classList.add('hidden');
             document.getElementById('quiz-screen').classList.remove('hidden');
             
-            // Inisialisasi Pre-Test
             currentStage = 'pre';
             currentQuestionIdx = 0;
             rawAnswers = [];
             loadQuestion();
         }
 
-        // PROSES LOGIN GURU (LANGSUNG MASUK UTAMA)
-        window.startGuruFlow = function() {
-            const passwordVal = document.getElementById('guru-password').value;
+        // POP UP MINTA PASSWORD GURU (PERBAIKAN FITUR)
+        window.promptGuruPassword = function() {
+            const passwordVal = prompt("Masukkan Kata Sandi Admin/Guru:");
+            
+            if (passwordVal === null) return; // Batal klik
 
             if(passwordVal === 'gizi2026' || passwordVal === 'admin') {
                 document.getElementById('login-screen').classList.add('hidden');
                 document.getElementById('guru-screen').classList.remove('hidden');
                 
-                // Ganti indikator navbar
                 document.getElementById('display-username').innerText = "Guru Pembimbing";
                 document.getElementById('user-indicator').classList.remove('hidden');
                 
-                // Aktifkan Radar Real-time Data Firestore
                 listenToDataLive();
             } else {
-                alert('❌ Kata sandi salah! Akses dashboard guru ditolak.');
+                alert('❌ Kata sandi salah! Akses ditolak.');
             }
         }
 
-        // TAMPILKAN SOAL KUIS
         function loadQuestion() {
             selectedOptionIdx = null;
             const nextBtn = document.getElementById('next-btn');
@@ -293,8 +247,6 @@
             nextBtn.className = "bg-slate-300 text-slate-500 font-semibold px-6 py-2.5 rounded-xl shadow transition-all cursor-not-allowed";
 
             const currentData = quizQuestions[currentQuestionIdx];
-            
-            // Update UI teks & progress
             document.getElementById('question-number').innerText = `${currentQuestionIdx + 1}/${quizQuestions.length}`;
             document.getElementById('question-text').innerText = currentData.q;
             
@@ -310,7 +262,6 @@
             const pct = ((currentQuestionIdx + 1) / quizQuestions.length) * 100;
             document.getElementById('quiz-progress').style.width = `${pct}%`;
 
-            // Render opsi jawaban
             const container = document.getElementById('options-container');
             container.innerHTML = '';
 
@@ -323,38 +274,29 @@
             });
         }
 
-        // PILIH SALAH SATU OPSI JAWABAN
         function selectOption(index, element) {
             selectedOptionIdx = index;
-            
-            // Bersihkan semua tombol aktif
             const allBtns = document.getElementById('options-container').children;
             for(let btn of allBtns) {
                 btn.className = "w-full text-left px-4 py-3 rounded-xl border border-slate-200 hover:bg-slate-50 font-medium transition-all flex items-center space-x-3 cursor-pointer";
                 btn.querySelector('.option-bullet').className = "w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-xs font-bold text-slate-500 border border-slate-300 option-bullet";
             }
-
-            // Aktifkan pilihan saat ini
             element.className = "w-full text-left px-4 py-3 rounded-xl border-2 border-emerald-500 bg-emerald-50/50 font-semibold transition-all flex items-center space-x-3 cursor-pointer";
             element.querySelector('.option-bullet').className = "w-6 h-6 rounded-full bg-emerald-500 flex items-center justify-center text-xs font-bold text-white option-bullet";
 
-            // Aktifkan tombol lanjut
             const nextBtn = document.getElementById('next-btn');
             nextBtn.disabled = false;
             nextBtn.className = "bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-6 py-2.5 rounded-xl shadow transition-all transform active:scale-95 cursor-pointer";
         }
 
-        // SUBMIT JAWABAN & PINDAH SOAL
         window.submitAnswer = function() {
             if(selectedOptionIdx === null) return;
-
             rawAnswers.push(selectedOptionIdx);
 
             if(currentQuestionIdx < quizQuestions.length - 1) {
                 currentQuestionIdx++;
                 loadQuestion();
             } else {
-                // Selesai satu stage kuis
                 if(currentStage === 'pre') {
                     preTestScore = calculateScore();
                     alert('🎉 Pre-Test Selesai! Sekarang lanjut ke materi berikutnya & kerjakan Post-Test.');
@@ -369,7 +311,6 @@
             }
         }
 
-        // HITUNG NILAI AKHIR
         function calculateScore() {
             let correctCount = 0;
             rawAnswers.forEach((ans, idx) => {
@@ -378,11 +319,9 @@
             return Math.round((correctCount / quizQuestions.length) * 100);
         }
 
-        // KIRIM DATA KE FIREBASE CLOUD
         async function saveDataToCloud() {
             try {
                 const progressBonus = postTestScore - preTestScore;
-                
                 await addDoc(collection(db, "nilai_siswa"), {
                     nama: studentData.name,
                     kelas: studentData.class,
@@ -392,26 +331,20 @@
                     waktu: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Makassar' })
                 });
 
-                // Tampilkan Hasil Akhir ke Siswa
                 document.getElementById('score-pre').innerText = preTestScore;
                 document.getElementById('score-post').innerText = postTestScore;
-                
                 const progText = document.getElementById('score-progress');
                 progText.innerText = (progressBonus >= 0) ? `+${progressBonus}` : progressBonus;
 
                 document.getElementById('quiz-screen').classList.add('hidden');
                 document.getElementById('result-screen').classList.remove('hidden');
-
             } catch (error) {
-                console.error("Gagal kirim data:", error);
                 alert("⚠️ Masalah koneksi cloud server. Nilai kamu gagal terkirim!");
             }
         }
 
-        // BACA DATA SECARA REALTIME (DASHBOARD GURU)
         function listenToDataLive() {
             const q = query(collection(db, "nilai_siswa"), orderBy("waktu", "desc"));
-            
             firestoreUnsubscribe = onSnapshot(q, (snapshot) => {
                 const tbody = document.getElementById('database-tbody');
                 tbody.innerHTML = '';
@@ -441,40 +374,27 @@
                     `;
                     tbody.appendChild(tr);
                 });
-            }, (error) => {
-                console.error("Error snapshot:", error);
-                alert("Gagal menyinkronkan database cloud server. Cek aturan Firestore Rules Anda.");
             });
         }
 
-        // RESET DAN LOGOUT KEMBALI
         window.resetToLogin = function() {
             if(firestoreUnsubscribe) {
                 firestoreUnsubscribe();
                 firestoreUnsubscribe = null;
             }
-
-            // Reset Form Inputs
             document.getElementById('siswa-name').value = '';
             document.getElementById('siswa-class').value = '';
-            document.getElementById('guru-password').value = '';
-
-            // Sembunyikan semua layar & tampilkan login
             document.getElementById('quiz-screen').classList.add('hidden');
             document.getElementById('result-screen').classList.add('hidden');
             document.getElementById('guru-screen').classList.add('hidden');
             document.getElementById('user-indicator').classList.add('hidden');
             document.getElementById('login-screen').classList.remove('hidden');
-            
-            switchLoginMode('siswa');
         }
 
-        // EKSPOR DATA KE FILE EXCEL (CSV)
         window.exportToCSV = function() {
             const table = document.querySelector("table");
             let csv = [];
             const rows = table.querySelectorAll("tr");
-            
             for (let i = 0; i < rows.length; i++) {
                 let row = [], cols = rows[i].querySelectorAll("td, th");
                 for (let j = 0; j < cols.length; j++) {
@@ -483,7 +403,6 @@
                 }
                 csv.push(row.join(","));
             }
-            
             const csvFile = new Blob([csv.join("\n")], { type: "text/csv;charset=utf-8;" });
             const downloadLink = document.createElement("a");
             downloadLink.download = `Rekap_Nilai_EduGizi_${new Date().toLocaleDateString('id-ID')}.csv`;
@@ -494,9 +413,8 @@
             document.body.removeChild(downloadLink);
         }
 
-        // RESET / KOSONGKAN SELURUH DATABASE
         window.clearDatabase = async function() {
-            if(confirm("⚠ PERINGATAN KRITIS!\n\nApakah Anda yakin ingin menghapus SELURUH rekap data nilai siswa secara permanen dari server cloud? Tindakan ini tidak bisa dibatalkan.")) {
+            if(confirm("Apakah Anda yakin ingin menghapus semua rekap data nilai siswa secara permanen dari server cloud?")) {
                 try {
                     const querySnapshot = await getDocs(collection(db, "nilai_siswa"));
                     const deletePromises = [];
@@ -504,9 +422,9 @@
                         deletePromises.push(deleteDoc(doc.ref));
                     });
                     await Promise.all(deletePromises);
-                    alert("🗑 Database cloud sukses dikosongkan secara total!");
+                    alert("🗑 Database cloud sukses dikosongkan!");
                 } catch (error) {
-                    alert("Gagal mengosongkan database: " + error);
+                    alert("Gagal: " + error);
                 }
             }
         }

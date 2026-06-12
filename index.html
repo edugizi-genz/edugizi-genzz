@@ -3,789 +3,250 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EDUGIZI - Edukasi Gizi untuk Remaja</title>
+    <title>Sistem Evaluasi Pre-Test & Post-Test</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        .page-section { display: none; }
-        .page-section.active { display: block; }
-        
-        /* Optimasi Cetak: Hanya mencetak area hasil, menyembunyikan yang lain */
-        @media print {
-            body * { visibility: hidden; }
-            #print-area, #print-area * { visibility: visible; }
-            #print-area {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 100%;
-                border: none;
-                box-shadow: none;
-            }
-            .no-print { display: none !important; }
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-slate-50 font-sans text-slate-800 antialiased" onclick="closeProfileDropdown(event)">
+<body class="bg-slate-100 font-sans antialiased">
 
-    <section id="page-login" class="page-section active min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-emerald-50 via-white to-orange-50">
-        <div class="bg-white p-8 rounded-3xl shadow-xl border border-slate-100 max-w-md w-full text-center">
-            <div class="text-emerald-600 text-4xl font-black mb-2 flex items-center justify-center gap-2">
-                <i class="fa-solid fa-apple-whole text-orange-500"></i>EDUGIZI
+    <div class="max-w-4xl mx-auto p-4 md:p-6 space-y-6">
+        
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <span id="quiz-type-badge" class="px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200 uppercase tracking-wider">
+                    Pre-Test
+                </span>
+                <h1 id="quiz-title" class="text-xl font-extrabold text-slate-800 mt-2">Evaluasi Pemahaman Materi</h1>
+                <p class="text-xs text-slate-500 mt-1">Silakan jawab pertanyaan di bawah ini dengan teliti.</p>
             </div>
-            <p class="text-xs text-slate-400 mb-8 font-medium">Edukasi Gizi Mendukung Program Makanan Bergizi Gratis<br>SMA Negeri 1 Parepare</p>
-            
-            <form onsubmit="handleLogin(event)" class="text-left space-y-4">
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">Nama Lengkap Siswa</label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400"><i class="fa-solid fa-user text-sm"></i></span>
-                        <input type="text" id="input-nama" required placeholder="Masukkan nama Anda..." class="w-full text-sm pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 font-medium">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1.5">Kelas</label>
-                    <div class="relative">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 text-slate-400"><i class="fa-solid fa-school text-sm"></i></span>
-                        <select id="input-kelas" required class="w-full text-sm pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 font-medium appearance-none">
-                            <option value="" disabled selected>Pilih Kelas Anda...</option>
-                            <option value="X (Sepuluh)">Kelas X (Sepuluh)</option>
-                            <option value="XI (Sebelas)">Kelas XI (Sebelas)</option>
-                            <option value="XII (Dua Belas)">Kelas XII (Dua Belas)</option>
-                        </select>
-                    </div>
-                </div>
-                <button type="submit" class="w-full mt-4 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2 text-sm cursor-pointer">
-                    Masuk ke Dashboard <i class="fa-solid fa-right-to-bracket"></i>
-                </button>
-            </form>
-            <div class="mt-6 border-t pt-4">
-                <button onclick="aksesAdminDenganSandi()" class="text-xs text-slate-400 hover:text-emerald-600 font-semibold underline cursor-pointer"><i class="fa-solid fa-lock mr-1"></i>Masuk Halaman Guru / Admin</button>
+            <div id="quiz-header-index" class="text-sm font-bold text-slate-600 bg-slate-50 px-4 py-2 rounded-xl border border-slate-200">
+                Soal 1 dari 5
             </div>
         </div>
-    </section>
 
-    <nav id="global-navbar" class="hidden bg-white shadow-sm border-b border-slate-100 sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16 items-center">
-                <div class="flex items-center gap-2 cursor-pointer" onclick="handleLogoClick()">
-                    <div class="text-emerald-600 text-2xl font-black flex items-center gap-1">
-                        <i class="fa-solid fa-apple-whole text-orange-500"></i>EDUGIZI
-                    </div>
-                </div>
-                <div class="flex gap-1 md:gap-2 font-semibold text-xs md:text-sm text-slate-600" id="main-nav">
-                    <button onclick="navigateTo('home')" id="nav-home" class="px-3 py-2 rounded-lg text-emerald-600 bg-emerald-50 cursor-pointer">Beranda</button>
-                    <button onclick="navigateTo('materi')" id="nav-materi" class="px-3 py-2 rounded-lg hover:text-emerald-600 cursor-pointer">Materi</button>
-                    <button onclick="navigateTo('pretest')" id="nav-pretest" class="px-3 py-2 rounded-lg hover:text-emerald-600 cursor-pointer">Pre-Test</button>
-                    <button onclick="navigateTo('posttest')" id="nav-posttest" class="px-3 py-2 rounded-lg hover:text-emerald-600 cursor-pointer">Post-Test</button>
-                </div>
-                
-                <div class="relative">
-                    <button onclick="toggleProfileDropdown(event)" id="btn-profile-dropdown" class="text-xs md:text-sm font-semibold text-slate-700 flex items-center gap-2 bg-slate-50 hover:bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-100 transition cursor-pointer">
-                        <i class="fa-solid fa-circle-user text-emerald-600 text-base pointer-events-none"></i> 
-                        <span id="user-display-name" class="pointer-events-none">Siswa</span>
-                        <i class="fa-solid fa-chevron-down text-[10px] text-slate-400 pointer-events-none"></i>
-                    </button>
-                    
-                    <div id="profile-dropdown-menu" class="hidden absolute right-0 mt-2 w-44 bg-white rounded-xl shadow-lg border border-slate-100 py-1 z-50">
-                        <button onclick="handleLogout()" class="w-full text-left px-4 py-2.5 text-xs font-bold text-red-600 hover:bg-red-50 flex items-center gap-2 transition cursor-pointer">
-                            <i class="fa-solid fa-arrow-right-from-bracket"></i> Keluar / Logout
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </nav>
-
-    <main id="main-content-area" class="hidden max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
-
-        <section id="page-home" class="page-section active space-y-12">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mt-4">
-                <div class="lg:col-span-7 space-y-6">
-                    <span class="text-xs font-bold text-emerald-600 uppercase tracking-widest bg-emerald-50 px-3 py-1 rounded-full">Sistem Informasi</span>
-                    <h1 class="text-4xl sm:text-6xl font-black text-slate-900 leading-tight">
-                        Edukasi <span class="text-emerald-600">Gizi</span>
-                    </h1>
-                    <p class="text-slate-600 font-medium text-sm sm:text-base leading-relaxed max-w-xl">
-                        Edukasi Gizi untuk Mendukung Program Makanan Bergizi Gratis di SMA Negeri 1 Parepare. Belajar gizi seimbang, terapkan pola makan sehat, dan tingkatkan kualitas hidup bersama.
-                    </p>
-                    <div class="flex flex-wrap gap-4 pt-2">
-                        <button onclick="navigateTo('materi')" class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-md transition flex items-center gap-2 cursor-pointer">
-                            <i class="fa-solid fa-book-open"></i> Mulai Belajar
-                        </button>
-                        <button onclick="navigateTo('pretest')" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-md transition flex items-center gap-2 cursor-pointer">
-                            <i class="fa-solid fa-pen-to-square"></i> Kerjakan Kuis
-                        </button>
-                    </div>
-                </div>
-                
-                <div class="lg:col-span-5 flex justify-center">
-                    <div class="bg-white p-6 rounded-3xl shadow-xl border border-slate-100 w-full max-w-sm text-center relative overflow-hidden">
-                        <div class="w-48 h-48 mx-auto bg-slate-50 rounded-full border-4 border-dashed border-emerald-500 flex items-center justify-center p-2 mb-4">
-                            <div class="grid grid-cols-2 gap-1 w-full h-full rounded-full overflow-hidden rotate-45">
-                                <div class="bg-orange-400 flex items-center justify-center text-white text-[10px] font-bold">Lauk</div>
-                                <div class="bg-emerald-500 flex items-center justify-center text-white text-[10px] font-bold">Sayur</div>
-                                <div class="bg-amber-500 flex items-center justify-center text-white text-[10px] font-bold">Pokok</div>
-                                <div class="bg-red-400 flex items-center justify-center text-white text-[10px] font-bold">Buah</div>
-                            </div>
-                        </div>
-                        <h3 class="font-bold text-slate-800 text-sm mb-1">Panduan Isi Piringku</h3>
-                        <p class="text-[11px] text-slate-400">50% Sayur & Buah, 50% Karbohidrat & Lauk Pauk</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-6">
-                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-xs flex items-start gap-4">
-                    <div class="p-3 bg-emerald-50 text-emerald-600 rounded-xl"><i class="fa-solid fa-graduation-cap text-lg"></i></div>
-                    <div>
-                        <h4 class="font-bold text-xs text-slate-800 mb-1">Materi Edukasi</h4>
-                        <p class="text-[11px] text-slate-400">Pelajari gizi seimbang untuk remaja.</p>
-                    </div>
-                </div>
-                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-xs flex items-start gap-4">
-                    <div class="p-3 bg-blue-50 text-blue-600 rounded-xl"><i class="fa-solid fa-list-check text-lg"></i></div>
-                    <div>
-                        <h4 class="font-bold text-xs text-slate-800 mb-1">Kuis Interaktif</h4>
-                        <p class="text-[11px] text-slate-400">Uji pemahamanmu lewat kuis menarik.</p>
-                    </div>
-                </div>
-                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-xs flex items-start gap-4">
-                    <div class="p-3 bg-amber-50 text-amber-600 rounded-xl"><i class="fa-solid fa-chart-line text-lg"></i></div>
-                    <div>
-                        <h4 class="font-bold text-xs text-slate-800 mb-1">Evaluasi Diri</h4>
-                        <p class="text-[11px] text-slate-400">Lihat hasil peningkatan pemahamanmu.</p>
-                    </div>
-                </div>
-                <div class="bg-white p-5 rounded-2xl border border-slate-100 shadow-xs flex items-start gap-4">
-                    <div class="p-3 bg-red-50 text-red-600 rounded-xl"><i class="fa-solid fa-heart text-lg"></i></div>
-                    <div>
-                        <h4 class="font-bold text-xs text-slate-800 mb-1">Hidup Sehat</h4>
-                        <p class="text-[11px] text-slate-400">Biasakan pola makan sehat setiap hari.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="page-materi" class="page-section max-w-6xl mx-auto">
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 mt-4">
-                <div class="md:col-span-4 bg-white p-4 rounded-2xl border border-slate-100 shadow-xs h-fit space-y-1" id="materi-sidebar">
-                    <h3 class="font-bold text-[10px] text-slate-400 uppercase tracking-wider px-2 mb-3">Daftar Materi</h3>
-                </div>
-
-                <div class="md:col-span-8 bg-white p-6 sm:p-8 rounded-2xl border border-slate-100 shadow-xs flex flex-col justify-between min-h-[500px]">
-                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                        <div class="lg:col-span-7 space-y-4">
-                            <h2 class="text-xl font-bold text-slate-800" id="materi-title">Memuat...</h2>
-                            <div class="text-slate-600 text-xs leading-relaxed space-y-3" id="materi-body"></div>
-                        </div>
-                        <div class="lg:col-span-5 flex flex-col items-center justify-center bg-slate-50 p-4 rounded-xl border border-slate-100">
-                            <div class="w-full max-w-[140px] space-y-1 text-center font-bold text-[9px] text-white">
-                                <div class="bg-red-500 p-1.5 rounded-t-full mx-auto w-10">Gula/Garam</div>
-                                <div class="bg-orange-400 p-1.5 rounded-md">Lauk-Pauk (2-4 Porsi)</div>
-                                <div class="bg-emerald-500 p-1.5 rounded-md">Sayur & Buah (3-5 Porsi)</div>
-                                <div class="bg-amber-500 p-1.5 rounded-b-xl">Makanan Pokok (3-8 Porsi)</div>
-                            </div>
-                            <span class="text-[10px] text-slate-400 font-medium mt-3">Piramida Gizi Seimbang</span>
-                        </div>
-                    </div>
-
-                    <div class="flex justify-between items-center pt-6 mt-6 border-t border-slate-100">
-                        <button id="btn-mat-prev" onclick="changeMateriPage(-1)" class="px-4 py-2 border border-slate-200 rounded-xl text-xs font-medium text-slate-500 hover:bg-slate-50 disabled:opacity-40 cursor-pointer">‹ Materi Sebelumnya</button>
-                        <button id="btn-mat-next" onclick="changeMateriPage(1)" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-medium cursor-pointer">Materi Selanjutnya ›</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="page-quiz-welcome" class="page-section max-w-3xl mx-auto">
-            <div class="bg-white p-8 sm:p-10 rounded-2xl border border-slate-100 shadow-sm mt-4 grid grid-cols-1 sm:grid-cols-12 gap-6 items-center">
-                <div class="sm:col-span-8 space-y-5">
-                    <h2 class="text-2xl font-black text-slate-800" id="quiz-welcome-title">Ujian</h2>
-                    <p class="text-xs text-slate-400 leading-relaxed" id="quiz-welcome-desc">Keterangan ujian.</p>
-                    
-                    <div class="grid grid-cols-3 gap-3">
-                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 text-center">
-                            <i class="fa-solid fa-list-ol text-emerald-600 text-sm mb-1"></i>
-                            <span class="block text-[9px] text-slate-400 font-bold uppercase">Jumlah Soal</span>
-                            <strong class="text-xs text-slate-700">10 Soal</strong>
-                        </div>
-                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 text-center">
-                            <i class="fa-solid fa-file-signature text-blue-600 text-sm mb-1"></i>
-                            <span class="block text-[9px] text-slate-400 font-bold uppercase">Jenis Soal</span>
-                            <strong class="text-xs text-slate-700">Pilihan Ganda</strong>
-                        </div>
-                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 text-center">
-                            <i class="fa-solid fa-clock text-orange-500 text-sm mb-1"></i>
-                            <span class="block text-[9px] text-slate-400 font-bold uppercase">Waktu</span>
-                            <strong class="text-xs text-slate-700">20 Menit</strong>
-                        </div>
-                    </div>
-
-                    <button onclick="startQuizGameplay()" id="btn-start-quiz-trigger" class="w-full sm:w-auto px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-md flex items-center justify-center gap-2 cursor-pointer">
-                        Mulai Test <i class="fa-solid fa-angle-right"></i>
-                    </button>
-                </div>
-                <div class="sm:col-span-4 justify-center hidden sm:flex text-slate-200">
-                    <i class="fa-solid fa-clipboard-list text-9xl"></i>
-                </div>
-            </div>
-        </section>
-
-        <section id="page-quiz-play" class="page-section max-w-5xl mx-auto">
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 mt-4">
-                <div class="md:col-span-3 bg-white p-4 rounded-2xl border border-slate-100 shadow-xs h-fit">
-                    <h3 class="font-bold text-[10px] text-slate-400 mb-3 uppercase tracking-wider">Daftar Soal</h3>
-                    <div class="grid grid-cols-5 gap-2" id="quiz-nav-nums"></div>
-                </div>
-
-                <div class="md:col-span-9 bg-white p-6 rounded-2xl border border-slate-100 shadow-xs flex flex-col justify-between min-h-[450px]">
-                    <div>
-                        <div class="flex justify-between items-center border-b border-slate-100 pb-3 mb-4">
-                            <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full" id="quiz-header-index">Soal 1 dari 10</span>
-                            <span class="text-xs text-slate-500 font-mono"><i class="fa-regular fa-clock text-orange-500 mr-1"></i> Sisa Waktu: <strong id="quiz-timer">20:00</strong></span>
-                        </div>
-                        <h3 class="text-sm font-bold text-slate-800 mb-5 leading-relaxed" id="quiz-question-text">Memuat Soal...</h3>
-                        <div class="space-y-2" id="quiz-options-container"></div>
-                    </div>
-
-                    <div id="quiz-feedback-box" class="mt-4 space-y-2 hidden"></div>
-
-                    <div class="flex justify-between items-center mt-6 pt-4 border-t border-slate-100">
-                        <button id="btn-quiz-prev" onclick="navigateQuizQuestion(-1)" class="px-4 py-2 border border-slate-200 rounded-xl text-xs font-medium text-slate-500 hover:bg-slate-50 disabled:opacity-40 cursor-pointer">‹ Soal Sebelumnya</button>
-                        <button id="btn-quiz-action" onclick="handleQuizAction()" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold cursor-pointer">Soal Berikutnya ›</button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="page-result" class="page-section max-w-4xl mx-auto">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-4">
-                <div id="print-area" class="lg:col-span-7 bg-white rounded-2xl border border-slate-100 shadow-md p-6 space-y-6">
-                    <div>
-                        <h2 class="text-xl font-bold text-slate-800"><i class="fa-solid fa-award text-amber-500 mr-2"></i>Hasil Evaluasi</h2>
-                        <p class="text-xs text-slate-400">Selamat! Anda telah menyelesaikan evaluasi.</p>
-                    </div>
-
-                    <div class="bg-slate-50 rounded-xl p-3 border border-slate-100 text-xs text-slate-600 grid grid-cols-2 gap-2">
-                        <div>Siswa: <strong id="res-student-name" class="text-slate-800">-</strong></div>
-                        <div>Kelas: <strong id="res-student-kelas" class="text-slate-800">-</strong></div>
-                        <div>Ujian: <strong id="res-exam-type" class="text-emerald-700 font-bold uppercase">-</strong></div>
-                        <div>Tanggal: <strong id="res-date" class="text-slate-800">12 Juni 2026</strong></div>
-                    </div>
-
-                    <div class="grid grid-cols-3 gap-3 text-center">
-                        <div class="bg-blue-50/70 p-3 rounded-xl border border-blue-100">
-                            <span class="text-[9px] text-blue-600 font-bold block uppercase tracking-wider">Nilai Pre-Test</span>
-                            <span class="text-xl font-black text-blue-700" id="res-score-pre">0</span>
-                        </div>
-                        <div class="bg-emerald-50/70 p-3 rounded-xl border border-emerald-100">
-                            <span class="text-[9px] text-emerald-600 font-bold block uppercase tracking-wider">Nilai Post-Test</span>
-                            <span class="text-xl font-black text-emerald-700" id="res-score-post">0</span>
-                        </div>
-                        <div class="bg-orange-50/70 p-3 rounded-xl border border-orange-100">
-                            <span class="text-[9px] text-orange-600 font-bold block uppercase tracking-wider">Peningkatan</span>
-                            <span class="text-xl font-black text-orange-700" id="res-score-diff">0</span>
-                        </div>
-                    </div>
-
-                    <div class="text-center p-3 bg-slate-50 rounded-xl border border-slate-100">
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Kategori Pemahaman</span>
-                        <div class="text-sm font-black text-emerald-600 mt-0.5" id="res-qualification-text">-</div>
-                    </div>
-
-                    <div class="flex justify-between gap-3 pt-2 no-print">
-                        <button onclick="navigateTo('home')" class="px-4 py-2 border border-slate-200 text-slate-600 rounded-xl text-xs font-medium hover:bg-slate-50 cursor-pointer">Kembali</button>
-                        <button onclick="window.print()" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-sm cursor-pointer"><i class="fa-solid fa-print mr-1"></i> Cetak Hasil</button>
-                    </div>
-                </div>
-
-                <div class="lg:col-span-5 bg-white rounded-2xl border border-slate-100 shadow-sm p-6 space-y-4 no-print">
-                    <h3 class="font-bold text-xs text-slate-800 uppercase tracking-wider">Tips Pola Makan Sehat</h3>
-                    <ul class="space-y-2 text-[11px] text-slate-600 list-none">
-                        <li class="flex items-start gap-2"><i class="fa-solid fa-circle-check text-emerald-500 mt-0.5"></i> Makan makanan beragam dan bergizi.</li>
-                        <li class="flex items-start gap-2"><i class="fa-solid fa-circle-check text-emerald-500 mt-0.5"></i> Perbanyak konsumsi sayur dan buah.</li>
-                        <li class="flex items-start gap-2"><i class="fa-solid fa-circle-check text-emerald-500 mt-0.5"></i> Minum air putih minimal 8 gelas sehari.</li>
-                        <li class="flex items-start gap-2"><i class="fa-solid fa-circle-check text-emerald-500 mt-0.5"></i> Batasi makanan manis, asin, dan berlemak.</li>
-                        <li class="flex items-start gap-2"><i class="fa-solid fa-circle-check text-emerald-500 mt-0.5"></i> Biasakan sarapan setiap hari.</li>
-                        <li class="flex items-start gap-2"><i class="fa-solid fa-circle-check text-emerald-500 mt-0.5"></i> Jaga kebersihan makanan dan lingkungan.</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-
-        <section id="page-admin" class="page-section max-w-6xl mx-auto space-y-6">
-            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div>
-                    <span class="text-[10px] bg-emerald-50 text-emerald-700 font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider"> Panel Kontrol Guru </span>
-                    <h2 class="text-xl font-black text-slate-950 mt-1.5 tracking-tight flex items-center gap-2">
-                        <i class="fa-solid fa-database text-emerald-600"></i> Rekapitulasi Nilai Evaluasi Siswa
-                    </h2>
-                    <p class="text-xs text-slate-500 mt-0.5"> Aplikasi EduGizi Kelompok 4 • <span class="font-semibold text-slate-700">SMAN 1 Parepare</span> </p>
-                </div>
-                <div class="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200/60">
-                    <span class="relative flex h-2 w-2">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                    </span>
-                    <span id="db-sync-status" class="text-[11px] font-bold text-slate-600">Database Terhubung</span>
-                </div>
-            </div>
-
-            <div class="flex justify-between items-center gap-2">
-                <button onclick="eksporDataCSV()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer shadow-sm">
-                    <i class="fa-solid fa-file-excel"></i> Ekspor ke Excel (.CSV)
-                </button>
-                <button onclick="bersihkanSemuaData()" class="px-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl text-xs font-bold transition cursor-pointer">
-                    <i class="fa-solid fa-trash-can"></i> Reset Data
-                </button>
-            </div>
-
-            <div class="bg-white border border-slate-100 rounded-2xl shadow-sm overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs border-collapse">
-                        <thead>
-                            <tr class="bg-slate-50 text-slate-500 font-bold border-b border-slate-100">
-                                <th class="p-4">No</th>
-                                <th class="p-4">Nama Siswa</th>
-                                <th class="p-4">Kelas</th>
-                                <th class="p-4 text-center">Skor Pre-Test</th>
-                                <th class="p-4 text-center">Skor Post-Test</th>
-                                <th class="p-4 text-center">Progres Poin</th>
-                                <th class="p-4">Waktu Ujian</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tabel-rekap-body" class="divide-y divide-slate-100 font-medium text-slate-700"></tbody>
-                    </table>
-                </div>
-            </div>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
             
-            <div class="pt-2">
-                <button onclick="handleLogout()" class="px-4 py-2 border border-slate-200 text-slate-500 rounded-xl text-xs font-semibold hover:bg-slate-50 cursor-pointer">‹ Keluar & Logout Kembali</button>
-            </div>
-        </section>
+            <div class="md:col-span-3 space-y-4">
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-6">
+                    <div class="space-y-2">
+                        <p id="quiz-question-text" class="text-sm font-semibold text-slate-800 leading-relaxed">
+                            Memuat soal...
+                        </p>
+                    </div>
 
-    </main>
+                    <div id="quiz-options-container" class="space-y-2.5">
+                        </div>
+
+                    <div id="quiz-feedback-box" class="hidden transition-all duration-300">
+                        </div>
+                </div>
+
+                <div class="flex justify-between items-center gap-4">
+                    <button id="btn-quiz-prev" onclick="navigateQuiz(-1)" class="px-4 py-2.5 text-xs font-bold text-slate-600 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 disabled:opacity-50 disabled:pointer-events-none transition flex items-center gap-2">
+                        ‹ Sebelumnya
+                    </button>
+                    <button id="btn-quiz-action" onclick="handleQuizAction()" class="px-5 py-2.5 text-xs font-bold text-white bg-emerald-600 border border-emerald-600 rounded-xl hover:bg-emerald-700 transition shadow-sm">
+                        Soal Berikutnya ›
+                    </button>
+                </div>
+            </div>
+
+            <div class="md:col-span-1">
+                <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 space-y-4 sticky top-6">
+                    <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Navigasi Soal</h3>
+                    <div id="quiz-nav-nums" class="grid grid-cols-4 gap-2">
+                        </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
 
     <script>
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbhw4y4XRv9x5SLT3d2owUbKOraUJHzSog7209grSgqRXzLK7J34wnfyFQQGVdyjV-t/exec";
-
-        let namaSiswa = "";
-        let kelasSiswa = "";
-        let tipeKuisAktif = "pretest";
-        let currentMateriIndex = 0;
-        let currentQuizIndex = 0;
-
-        let nilaiPreTestSiswa = 0;
-        let nilaiPostTestSiswa = 0;
-        let logoClickCount = 0;
-        let adminIntervalTimer = null;
-
-        const databaseMateri = [
-            { title: "1. Pengertian Gizi Seimbang", content: "<p>Gizi seimbang adalah susunan makanan sehari-hari yang mengandung zat gizi dalam jenis dan jumlah yang sesuai dengan kebutuhan tubuh, dengan memperhatikan prinsip keanekaragaman pangan, aktivitas fisik, perilaku hidup bersih, dan mempertahankan berat badan normal untuk mencegah masalah gizi.</p><p class='font-semibold text-emerald-600 mt-2'>Manfaat Gizi Seimbang:</p><ul class='list-disc pl-4 space-y-0.5'><li>Menjaga kesehatan tubuh</li><li>Mendukung pertumbuhan</li><li>Meningkatkan daya tahan</li></ul>" },
-            { title: "2. Zat Gizi", content: "<p>Zat gizi terdiri atas Zat Gizi Makro (Karbohidrat, Protein, Lemak) yang dibutuhkan dalam jumlah besar sebagai sumber energi, serta Zat Gizi Mikro (Vitamin & Mineral) yang mengatur kelancaran fungsi metabolisme sel tubuh.</p>" },
-            { title: "3. Pola Makan Sehat Remaja", content: "<p>Remaja membutuhkan asupan kalori efisien karena pertumbuhan fisik berjalan sangat pesat. Menjaga pola makan 3 kali sehari secara teratur membantu konsentrasi belajar tetap optimal.</p>" },
-            { title: "4. Isi Piringku", content: "<p>Slogan pengganti 4 Sehat 5 Sempurna. Mengatur porsi dalam satu piring: 1/3 bagian makanan pokok, 1/3 bagian sayuran, 1/6 bagian lauk-pauk, dan 1/6 bagian buah-buahan.</p>" },
-            { title: "5. Pentingnya Sarapan", content: "<p>Sarapan membekali energi glukosa bagi otak setelah berpuasa semalaman. Remaja yang rutin sarapan terbukti memiliki performa akademis yang jauh lebih baik di sekolah.</p>" },
-            { title: "6. Program Makanan Bergizi Gratis", content: "<p>Program sekolah yang bertujuan memastikan pemerataan kecukupan gizi hewani, energi, dan serat bagi seluruh siswa demi mewujudkan generasi emas Indonesia merdeka stunting.</p>" }
-        ];
-
         const databaseSoal = [
-            { q: "Berikut yang termasuk sumber protein hewani untuk pertumbuhan remaja adalah...", o: ["Nasi putih", "Minyak kelapa", "Telur", "Gula"], c: 2 },
-            { q: "Zat gizi makro yang berfungsi sebagai sumber energi utama tubuh adalah...", o: ["Karbohidrat", "Vitamin C", "Zat Besi", "Kalsium"], c: 0 },
-            { q: "Porsi sayuran dalam aturan panduan 'Isi Piringku' yang ideal memenuhi...", o: ["Sepertiga (1/3) dari piring", "Hanya 5% piring", "Setengah sendok", "Seluruh piring"], c: 0 },
-            { q: "Dampak buruk bagi remaja jika sering melewatkan waktu sarapan pagi adalah...", o: ["Sulit berkonsentrasi", "Badan terlalu tinggi", "Gigi menjadi kuat", "Mata makin tajam"], c: 0 },
-            { q: "Penyakit anemia pada remaja disebabkan karena tubuh kekurangan zat gizi mikro...", o: ["Zat Besi", "Vitamin E", "Karbohidrat", "Lemak jenuh"], c: 0 },
-            { q: "Berikut yang bukan termasuk dalam pilar Gizi Seimbang adalah...", o: ["Melakukan aktivitas fisik", "Mencuci tangan dengan sabun", "Minum soda setiap hari", "Memantau berat badan"], c: 2 },
-            { q: "Manakah contoh kombinasi sarapan yang paling sehat dan seimbang?", o: ["Nasi, mie instan, dan kerupuk", "Nasi, telur dadar, dan sayur", "Sirup manis dan gorengan", "Hanya minum air teh"], c: 1 },
-            { q: "Zat gizi mikro yang banyak terkandung dalam buah jeruk dan mangga adalah...", o: ["Vitamin C", "Karbohidrat complexes", "Laktosa", "Protein nabati"], c: 0 },
-            { q: "Mengapa program Makanan Bergizi Gratis penting diterapkan bagi siswa?", o: ["Supaya mengantuk", "Mencegah stunting & meningkatkan prestasi", "Hanya pelengkap waktu luang", "Mengurangi jam belajar"], c: 1 },
-            { q: "Aktivitas fisik ringan hingga sedang yang dianjurkan untuk mendukung porsi metabolisme tubuh minimal dilakukan selama...", o: ["30 menit sehari", "24 jam nonstop", "1 menit setahun", "Hanya saat tidur"], c: 0 }
+            {
+                q: "Manakah dari berikut ini yang merupakan komponen utama dari hardware komputer?",
+                o: ["Sistem Operasi", "CPU (Central Processing Unit)", "Browser Internet", "Aplikasi Microsoft Word"],
+                c: 1
+            },
+            {
+                q: "Apa fungsi utama dari RAM pada perangkat komputer?",
+                o: ["Menyimpan data secara permanen", "Memproses grafis game tingkat tinggi", "Tempat penyimpanan data sementara saat aplikasi berjalan", "Melindungi komputer dari virus"],
+                c: 2
+            },
+            {
+                q: "Protokol standar yang digunakan untuk mengamankan komunikasi data di web browser adalah...",
+                o: ["HTTP", "FTP", "HTTPS", "SMTP"],
+                c: 2
+            },
+            {
+                q: "Manakah yang termasuk dalam kategori perangkat input (masukan)?",
+                o: ["Monitor", "Printer", "Keyboard", "Proyektor"],
+                c: 2
+            },
+            {
+                q: "Sistem bilangan yang hanya menggunakan angka 0 dan 1 disebut sistem bilangan...",
+                o: ["Desimal", "Biner", "Oktal", "Heksadesimal"],
+                c: 1
+            }
         ];
 
-        let jawabanSiswa = [];
-        let kuisTimerInterval = null;
-        const KUIS_DURASI_DETIK = 20 * 60; // 20 Menit
-        let kuisSisaWaktu = KUIS_DURASI_DETIK;
+        let tipeKuisAktif = 'pretest'; // Pilihan: 'pretest' atau 'posttest'
+        let currentQuizIndex = 0;
+        let jawabanSiswa = Array(databaseSoal.length).fill(null);
 
-        // --- MANAJEMEN ROUTING HALAMAN ---
-        function navigateTo(pageId) {
-            if (!namaSiswa && pageId !== 'login') {
-                alert("Silakan masukkan nama dan kelas terlebih dahulu!");
-                navigateTo('login');
-                return;
-            }
-
-            document.querySelectorAll('.page-section').forEach(sec => sec.classList.remove('active'));
-            const targetPage = document.getElementById(`page-${pageId}`);
-            if (targetPage) targetPage.classList.add('active');
-
-            document.querySelectorAll('#main-nav button').forEach(btn => {
-                btn.classList.remove('text-emerald-600', 'bg-emerald-50');
-                btn.classList.add('hover:text-emerald-600');
-            });
-            const activeNavBtn = document.getElementById(`nav-${pageId}`);
-            if (activeNavBtn) {
-                activeNavBtn.classList.add('text-emerald-600', 'bg-emerald-50');
-                activeNavBtn.classList.remove('hover:text-emerald-600');
-            }
-
-            if (pageId === 'materi') {
-                renderMateriSidebar();
-                loadMateriPage(currentMateriIndex);
-            } else if (pageId === 'pretest') {
-                initWelcomeQuiz('pretest');
-            } else if (pageId === 'posttest') {
-                initWelcomeQuiz('posttest');
-            } else if (pageId === 'admin') {
-                startAdminAutoRefresh();
-            }
-
-            if (pageId !== 'admin') stopAdminAutoRefresh();
-        }
-
-        // --- SISTEM OTENTIKASI & USER PROFIL ---
-        function handleLogin(e) {
-            e.preventDefault();
-            const inputNama = document.getElementById('input-nama').value.trim();
-            const inputKelas = document.getElementById('input-kelas').value;
-
-            if (!inputNama || !inputKelas) {
-                alert("Mohon isi semua data formulir login!");
-                return;
-            }
-
-            namaSiswa = inputNama;
-            kelasSiswa = inputKelas;
-
-            document.getElementById('user-display-name').innerText = namaSiswa;
-            document.getElementById('global-navbar').classList.remove('hidden');
-            document.getElementById('main-content-area').classList.remove('hidden');
-
-            navigateTo('home');
-        }
-
-        function handleLogout() {
-            namaSiswa = ""; kelasSiswa = ""; nilaiPreTestSiswa = 0; nilaiPostTestSiswa = 0;
-            jawabanSiswa = []; clearInterval(kuisTimerInterval);
-
-            document.getElementById('input-nama').value = "";
-            document.getElementById('input-kelas').selectedIndex = 0;
-            document.getElementById('global-navbar').classList.add('hidden');
-            document.getElementById('main-content-area').classList.add('hidden');
-
-            navigateTo('login');
-        }
-
-        function toggleProfileDropdown(e) {
-            e.stopPropagation();
-            document.getElementById('profile-dropdown-menu').classList.toggle('hidden');
-        }
-
-        function closeProfileDropdown(e) {
-            document.getElementById('profile-dropdown-menu').classList.add('hidden');
-        }
-
-        // --- MANAJEMEN HALAMAN MODUL MATERI ---
-        function renderMateriSidebar() {
-            const sidebar = document.getElementById('materi-sidebar');
-            sidebar.innerHTML = '<h3 class="font-bold text-[10px] text-slate-400 uppercase tracking-wider px-2 mb-3">Daftar Materi</h3>';
-            
-            databaseMateri.forEach((item, index) => {
-                const btn = document.createElement('button');
-                btn.className = `w-full text-left px-3 py-2 text-xs font-semibold rounded-xl transition cursor-pointer text-ellipsis overflow-hidden whitespace-nowrap ${index === currentMateriIndex ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-50'}`;
-                btn.innerText = item.title;
-                btn.onclick = () => {
-                    currentMateriIndex = index;
-                    renderMateriSidebar();
-                    loadMateriPage(index);
-                };
-                sidebar.appendChild(btn);
-            });
-        }
-
-        function loadMateriPage(index) {
-            const materi = databaseMateri[index];
-            document.getElementById('materi-title').innerText = materi.title;
-            document.getElementById('materi-body').innerHTML = materi.content;
-
-            document.getElementById('btn-mat-prev').disabled = (index === 0);
-            const nextBtn = document.getElementById('btn-mat-next');
-            if (index === databaseMateri.length - 1) {
-                nextBtn.innerText = "Selesai Belajar ✓";
-                nextBtn.onclick = () => navigateTo('posttest');
-            } else {
-                nextBtn.innerText = "Materi Selanjutnya ›";
-                nextBtn.onclick = () => changeMateriPage(1);
-            }
-        }
-
-        function changeMateriPage(dir) {
-            currentMateriIndex += dir;
-            renderMateriSidebar();
-            loadMateriPage(currentMateriIndex);
-        }
-
-        // --- SISTEM ENGINE KUIS ---
-        function initWelcomeQuiz(tipe) {
+        function initQuiz(tipe) {
             tipeKuisAktif = tipe;
-            document.getElementById('quiz-welcome-title').innerText = tipe === 'pretest' ? 'Evaluasi Awal (Pre-Test)' : 'Evaluasi Akhir (Post-Test)';
-            document.getElementById('quiz-welcome-desc').innerText = tipe === 'pretest' 
-                ? 'Kuis ini bertujuan untuk mengukur sejauh mana pemahaman awal kamu mengenai materi gizi seimbang sebelum membaca modul edukasi.' 
-                : 'Kuis ini bertujuan untuk mengukur tingkat peningkatan pemahaman kamu setelah mempelajari seluruh rangkaian modul edukasi EduGizi.';
-            
-            document.getElementById('page-quiz-welcome').classList.add('active');
-        }
-
-        function startQuizGameplay() {
-            document.getElementById('page-quiz-welcome').classList.remove('active');
-            document.getElementById('page-quiz-play').classList.add('active');
-
             currentQuizIndex = 0;
-            kuisSisaWaktu = KUIS_DURASI_DETIK;
-            jawabanSiswa = new Array(databaseSoal.length).fill(null);
-
-            renderQuizNavNumbers();
-            loadQuizQuestion(0);
-            startQuizTimer();
-        }
-
-        function startQuizTimer() {
-            clearInterval(kuisTimerInterval);
-            kuisTimerInterval = setInterval(() => {
-                kuisSisaWaktu--;
-                const menit = Math.floor(kuisSisaWaktu / 60);
-                const detik = kuisSisaWaktu % 60;
-                document.getElementById('quiz-timer').innerText = `${String(menit).padStart(2, '0')}:${String(detik).padStart(2, '0')}`;
-
-                if (kuisSisaWaktu <= 0) {
-                    clearInterval(kuisTimerInterval);
-                    alert("Waktu pengerjaan kuis telah habis!");
-                    autoSubmitQuiz();
-                }
-            }, 1000);
-        }
-
-        function renderQuizNavNumbers() {
-            const container = document.getElementById('quiz-nav-nums');
-            container.innerHTML = "";
-
-            databaseSoal.forEach((_, index) => {
-                const btn = document.createElement('button');
-                btn.className = `p-2 text-center text-xs font-bold rounded-lg border transition cursor-pointer ${jawabanSiswa[index] !== null ? 'bg-emerald-50 text-emerald-700 border-emerald-300' : 'bg-slate-50 text-slate-500 border-slate-200'}`;
-                if (index === currentQuizIndex) btn.classList.add('ring-2', 'ring-emerald-500');
-                btn.innerText = index + 1;
-                btn.onclick = () => {
-                    currentQuizIndex = index;
-                    renderQuizNavNumbers();
-                    loadQuizQuestion(index);
-                };
-                container.appendChild(btn);
-            });
-        }
-
-        function loadQuizQuestion(index) {
-            const soal = databaseSoal[index];
-            document.getElementById('quiz-header-index').innerText = `Soal ${index + 1} dari ${databaseSoal.length}`;
-            document.getElementById('quiz-question-text').innerText = soal.q;
-
-            const optionsContainer = document.getElementById('quiz-options-container');
-            optionsContainer.innerHTML = "";
-
-            soal.o.forEach((opsi, oIdx) => {
-                const isSelected = jawabanSiswa[index] === oIdx;
-                const btn = document.createElement('button');
-                btn.className = `w-full text-left p-3 text-xs font-medium rounded-xl border transition flex items-center gap-3 cursor-pointer ${isSelected ? 'bg-emerald-50 border-emerald-500 text-emerald-900 font-semibold' : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'}`;
-                btn.innerHTML = `<span class="w-5 h-5 flex items-center justify-center rounded-full text-[10px] font-bold ${isSelected ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-500'}">${String.fromCharCode(65 + oIdx)}</span> ${opsi}`;
-                btn.onclick = () => {
-                    jawabanSiswa[index] = oIdx;
-                    renderQuizNavNumbers();
-                    loadQuizQuestion(index);
-                };
-                optionsContainer.appendChild(btn);
-            });
-
-            document.getElementById('btn-quiz-prev').disabled = (index === 0);
-            const actionBtn = document.getElementById('btn-quiz-action');
-            if (index === databaseSoal.length - 1) {
-                actionBtn.innerText = "Kirim & Selesai";
-                actionBtn.className = "px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold cursor-pointer";
+            jawabanSiswa = Array(databaseSoal.length).fill(null);
+            
+            // Atur Badge Header
+            const badge = document.getElementById('quiz-type-badge');
+            if(tipe === 'pretest') {
+                badge.innerText = "Pre-Test";
+                badge.className = "px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200 uppercase tracking-wider";
             } else {
-                actionBtn.innerText = "Soal Berikutnya ›";
-                actionBtn.className = "px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold cursor-pointer";
+                badge.innerText = "Post-Test";
+                badge.className = "px-3 py-1 rounded-full text-xs font-bold bg-indigo-50 text-indigo-700 border border-indigo-200 uppercase tracking-wider";
             }
+
+            renderNavNumbers();
+            showQuizQuestion(0);
         }
 
-        function navigateQuizQuestion(dir) {
-            currentQuizIndex += dir;
-            renderQuizNavNumbers();
-            loadQuizQuestion(currentQuizIndex);
+        function renderNavNumbers() {
+            const navBox = document.getElementById('quiz-nav-nums');
+            navBox.innerHTML = "";
+            databaseSoal.forEach((_, i) => {
+                const btn = document.createElement('button');
+                btn.id = `q-num-${i}`;
+                btn.innerText = i + 1;
+                btn.onclick = () => showQuizQuestion(i);
+                navBox.appendChild(btn);
+            });
         }
 
+        function showQuizQuestion(idx) {
+            currentQuizIndex = idx;
+            document.getElementById('quiz-header-index').innerText = `Soal ${idx + 1} dari ${databaseSoal.length}`;
+            
+            document.querySelectorAll('#quiz-nav-nums button').forEach((b, i) => {
+                if(jawabanSiswa[i] !== null) {
+                    b.className = "p-2 text-center text-xs font-bold rounded-xl text-white bg-emerald-600 border border-emerald-600 cursor-pointer";
+                } else {
+                    b.className = "p-2 text-center text-xs font-bold rounded-xl text-slate-500 border border-slate-200 hover:bg-slate-50 cursor-pointer";
+                }
+            });
+            const activeNum = document.getElementById(`q-num-${idx}`);
+            if(activeNum) activeNum.className = "p-2 text-center text-xs font-bold rounded-xl ring-2 ring-offset-1 ring-emerald-500 bg-emerald-50 text-emerald-700 border border-emerald-300 cursor-pointer";
+
+           
+            const data = databaseSoal[idx];
+            document.getElementById('quiz-question-text').innerText = data.q;
+            
+            const optBox = document.getElementById('quiz-options-container');
+            optBox.innerHTML = "";
+            
+            const feedbackBox = document.getElementById('quiz-feedback-box');
+            feedbackBox.classList.add('hidden'); 
+
+            const huruf = ['A', 'B', 'C', 'D'];
+            const sudahDijawab = jawabanSiswa[idx] !== null;
+
+            data.o.forEach((opt, oIdx) => {
+                const terpilih = jawabanSiswa[idx] === oIdx;
+                const apakahBenar = oIdx === data.c;
+                
+                const optBtn = document.createElement('button');
+                optBtn.disabled = sudahDijawab && tipeKuisAktif === 'posttest';
+                
+                let btnClass = "bg-slate-50/50 border-slate-200 text-slate-700 hover:bg-slate-50";
+                let badgeClass = "text-slate-400 border-slate-200";
+                
+                if (terpilih) {
+                    btnClass = "bg-emerald-50 border-emerald-500 text-emerald-900 font-bold";
+                    badgeClass = "text-emerald-600 border-emerald-400";
+                }
+                if (tipeKuisAktif === 'posttest' && sudahDijawab) {
+                    if (apakahBenar) {
+                        btnClass = "bg-emerald-100 border-emerald-500 text-emerald-900 font-bold pointer-events-none";
+                        badgeClass = "bg-emerald-600 text-white border-emerald-600";
+                    } else if (terpilih && !apakahBenar) {
+                        btnClass = "bg-rose-100 border-rose-500 text-rose-900 font-bold pointer-events-none";
+                        badgeClass = "bg-rose-600 text-white border-rose-600";
+                    } else {
+                        btnClass = "bg-slate-50 opacity-50 border-slate-200 text-slate-400 pointer-events-none";
+                    }
+                }
+
+                optBtn.className = `w-full text-left p-3 text-xs font-semibold rounded-xl border transition flex items-center gap-3 cursor-pointer ${btnClass}`;
+                optBtn.innerHTML = `<span class="w-6 h-6 rounded-lg bg-white flex items-center justify-center border font-bold text-[11px] ${badgeClass}">${huruf[oIdx]}</span> ${opt}`;
+                
+                optBtn.onclick = () => {
+                    jawabanSiswa[idx] = oIdx;
+                    showQuizQuestion(idx); 
+                };
+                optBox.appendChild(optBtn);
+            });
+            
+            if (tipeKuisAktif === 'posttest' && sudahDijawab) {
+                const jawabanBenarSiswa = jawabanSiswa[idx] === data.c;
+                feedbackBox.classList.remove('hidden');
+                
+                if (jawabanBenarSiswa) {
+                    feedbackBox.innerHTML = `
+                        <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800 font-medium flex items-start gap-2 animate-fade-in">
+                            <i class="fa-solid fa-circle-check text-emerald-600 mt-0.5 text-sm"></i>
+                            <div>
+                                <strong>Jawaban Anda Benar!</strong> Pilihan yang tepat adalah opsi <strong>${huruf[data.c]}</strong>. Kerja bagus!
+                            </div>
+                        </div>`;
+                } else {
+                    feedbackBox.innerHTML = `
+                        <div class="p-3 bg-rose-50 border border-rose-200 rounded-xl text-xs text-rose-800 font-medium flex items-start gap-2 animate-fade-in">
+                            <i class="fa-solid fa-circle-xmark text-rose-600 mt-0.5 text-sm"></i>
+                            <div>
+                                <strong>Jawaban Anda Salah.</strong> Anda memilih opsi ${huruf[jawabanSiswa[idx]]}. Kunci jawaban yang benar seharusnya adalah <strong>${huruf[data.c]} (${data.o[data.c]})</strong>. Silakan pelajari kembali poin ini.
+                            </div>
+                        </div>`;
+                }
+            }
+
+            document.getElementById('btn-quiz-prev').disabled = (idx === 0);
+            document.getElementById('btn-quiz-action').innerText = (idx === databaseSoal.length - 1) ? "Kirim Ujian ✓" : "Soal Berikutnya ›";
+        }
+
+        function navigateQuiz(direction) {
+            const targetIdx = currentQuizIndex + direction;
+            if (targetIdx >= 0 && targetIdx < databaseSoal.length) {
+                showQuizQuestion(targetIdx);
+            }
+        })
         function handleQuizAction() {
             if (currentQuizIndex < databaseSoal.length - 1) {
-                navigateQuizQuestion(1);
+                showQuizQuestion(currentQuizIndex + 1);
             } else {
-                if (jawabanSiswa.includes(null)) {
-                    if (!confirm("Masih ada soal yang belum Anda jawab. Anda yakin ingin menyelesaikan kuis ini?")) return;
-                }
-                autoSubmitQuiz();
-            }
-        }
+                // Hitung Skor Akhir Siswa
+                let skorBenar = 0;
+                databaseSoal.forEach((item, i) => {
+                    if (jawabanSiswa[i] === item.c) skorBenar++;
+                });
+                const totalSkor = Math.round((skorBenar / databaseSoal.length) * 100);
 
-        function autoSubmitQuiz() {
-            clearInterval(kuisTimerInterval);
-            let jawabanBenar = 0;
-            databaseSoal.forEach((soal, index) => {
-                if (jawabanSiswa[index] === soal.c) jawabanBenar++;
-            });
-
-            const skorAkhir = Math.round((jawabanBenar / databaseSoal.length) * 100);
-            if (tipeKuisAktif === 'pretest') {
-                nilaiPreTestSiswa = skorAkhir;
-            } else {
-                nilaiPostTestSiswa = skorAkhir;
-            }
-
-            showQuizResultView();
-            kirimDataKeCloud();
-        }
-
-        function showQuizResultView() {
-            document.getElementById('page-quiz-play').classList.remove('active');
-            document.getElementById('page-result').classList.add('active');
-
-            document.getElementById('res-student-name').innerText = namaSiswa;
-            document.getElementById('res-student-kelas').innerText = kelasSiswa;
-            document.getElementById('res-exam-type').innerText = tipeKuisAktif;
-            document.getElementById('res-score-pre').innerText = nilaiPreTestSiswa;
-            document.getElementById('res-score-post').innerText = nilaiPostTestSiswa;
-
-            const selisih = nilaiPostTestSiswa - nilaiPreTestSiswa;
-            document.getElementById('res-score-diff').innerText = (selisih >= 0 ? `+${selisih}` : selisih);
-
-            const kualifikasiEl = document.getElementById('res-qualification-text');
-            const nilaiAcuan = tipeKuisAktif === 'posttest' ? nilaiPostTestSiswa : nilaiPreTestSiswa;
-
-            if (nilaiAcuan >= 80) {
-                kualifikasiEl.innerText = "SANGAT BAIK & PAHAM GIZI SEIMBANG";
-                kualifikasiEl.className = "text-sm font-black text-emerald-600 mt-0.5";
-            } else if (nilaiAcuan >= 60) {
-                kualifikasiEl.innerText = "CUKUP PAHAM (Perlu Sedikit Mengulas)";
-                kualifikasiEl.className = "text-sm font-black text-amber-500 mt-0.5";
-            } else {
-                kualifikasiEl.innerText = "KURANG PAHAM (Sangat Direkomendasikan Baca Ulang Modul)";
-                kualifikasiEl.className = "text-sm font-black text-rose-500 mt-0.5";
-            }
-        }
-
-        // --- CLOUD SERVER INTEGRASI (FIXED CORS) ---
-        function kirimDataKeCloud() {
-            if (!SCRIPT_URL) return;
-            const payload = {
-                action: "simpanSkor",
-                nama: namaSiswa,
-                kelas: kelasSiswa,
-                pretest: nilaiPreTestSiswa,
-                posttest: nilaiPostTestSiswa,
-                progres: nilaiPostTestSiswa - nilaiPreTestSiswa,
-                waktu: new Date().toLocaleString("id-ID")
-            };
-
-            // Mengirim data tanpa merusak pipeline pembacaan CORS
-            fetch(SCRIPT_URL, {
-                method: "POST",
-                headers: { "Content-Type": "text/plain;charset=utf-8" },
-                body: JSON.stringify(payload)
-            })
-            .then(res => console.log("Permintaan sinkronisasi terkirim."))
-            .catch(err => console.error("Gagal sinkronisasi data cloud: ", err));
-        }
-
-        // --- FITUR PANEL GURU / ADMINISTRATOR ---
-        function handleLogoClick() {
-            logoClickCount++;
-            if (logoClickCount >= 5) {
-                logoClickCount = 0;
-                aksesAdminDenganSandi();
-            }
-        }
-
-        function aksesAdminDenganSandi() {
-            const sandi = prompt("Masukkan Kata Sandi / Password Guru:");
-            if (sandi === "gizi123" || sandi === "admin") {
-                navigateTo('admin');
-            } else if (sandi !== null) {
-                alert("Kata sandi salah! Akses ditolak.");
-            }
-        }
-
-        function startAdminAutoRefresh() {
-            muatDataDariCloud();
-            clearInterval(adminIntervalTimer);
-            adminIntervalTimer = setInterval(muatDataDariCloud, 10000);
-        }
-
-        function stopAdminAutoRefresh() {
-            clearInterval(adminIntervalTimer);
-        }
-
-        function muatDataDariCloud() {
-            if (!SCRIPT_URL) return;
-            const statusEl = document.getElementById('db-sync-status');
-            statusEl.innerText = "Memperbarui data...";
-
-            fetch(`${SCRIPT_URL}?action=ambilData`)
-            .then(res => res.json())
-            .then(data => {
-                const tbody = document.getElementById('tabel-rekap-body');
-                tbody.innerHTML = "";
-
-                if (!data || data.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-400">Belum ada data nilai siswa yang terekam.</td></tr>`;
+                alert(`--- HASIL ${tipeKuisAktif.toUpperCase()} ---\n\nTotal Benar: ${skorBenar} dari ${databaseSoal.length} Soal\nNilai Akhir: ${totalSkor}`);
+                
+                if(tipeKuisAktif === 'pretest') {
+                    if(confirm("Pre-Test selesai! Apakah Anda ingin langsung memulai Post-Test dengan pembahasan interaktif?")) {
+                        initQuiz('posttest');
+                    }
                 } else {
-                    data.forEach((row, idx) => {
-                        const tr = document.createElement('tr');
-                        tr.className = "hover:bg-slate-50/80 transition border-b border-slate-100";
-                        tr.innerHTML = `
-                            <td class="p-4 text-slate-400 font-bold">${idx + 1}</td>
-                            <td class="p-4 font-bold text-slate-900">${row.nama}</td>
-                            <td class="p-4">${row.kelas}</td>
-                            <td class="p-4 text-center font-bold text-blue-600">${row.pretest}</td>
-                            <td class="p-4 text-center font-bold text-emerald-600">${row.posttest}</td>
-                            <td class="p-4 text-center"><span class="px-2 py-0.5 rounded-md font-bold text-[10px] ${row.progres >= 0 ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'}">${row.progres >= 0 ? '+' : ''}${row.progres}</span></td>
-                            <td class="p-4 text-slate-400 text-[10px] font-normal">${row.waktu}</td>
-                        `;
-                        tbody.appendChild(tr);
-                    });
-                }
-                statusEl.innerText = "Database Terhubung";
-            })
-            .catch(err => {
-                console.error(err);
-                statusEl.innerText = "Gagal Memuat Cloud";
-            });
-        }
-
-        function eksporDataCSV() {
-            if (!SCRIPT_URL) return;
-            window.open(`${SCRIPT_URL}?action=eksporCSV`, '_blank');
-        }
-
-        function bersihkanSemuaData() {
-            if (confirm("Apakah Anda yakin ingin menghapus seluruh data nilai di Google Sheets? Tindakan ini permanen!")) {
-                const sandi = prompt("Masukkan kunci enkripsi konfirmasi:");
-                if (sandi === "gizi123" || sandi === "admin") {
-                    fetch(SCRIPT_URL, {
-                        method: "POST",
-                        body: JSON.stringify({ action: "resetData" })
-                    }).then(() => {
-                        alert("Database dibersihkan!");
-                        muatDataDariCloud();
-                    });
+                    alert("Selamat! Anda telah menyelesaikan seluruh rangkaian evaluasi.");
                 }
             }
         }
+        window.onload = function() {
+            initQuiz('pretest');
+        };
     </script>
 </body>
 </html>

@@ -9,6 +9,21 @@
     <style>
         .page-section { display: none; }
         .page-section.active { display: block; }
+        
+        /* Optimasi Cetak: Hanya mencetak area hasil, menyembunyikan yang lain */
+        @media print {
+            body * { visibility: hidden; }
+            #print-area, #print-area * { visibility: visible; }
+            #print-area {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                border: none;
+                box-shadow: none;
+            }
+            .no-print { display: none !important; }
+        }
     </style>
 </head>
 <body class="bg-slate-50 font-sans text-slate-800 antialiased" onclick="closeProfileDropdown(event)">
@@ -40,7 +55,7 @@
                         </select>
                     </div>
                 </div>
-                <button type="submit" class="w-full mt-4 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2 text-sm">
+                <button type="submit" class="w-full mt-4 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2 text-sm cursor-pointer">
                     Masuk ke Dashboard <i class="fa-solid fa-right-to-bracket"></i>
                 </button>
             </form>
@@ -59,10 +74,10 @@
                     </div>
                 </div>
                 <div class="flex gap-1 md:gap-2 font-semibold text-xs md:text-sm text-slate-600" id="main-nav">
-                    <button onclick="navigateTo('home')" id="nav-home" class="px-3 py-2 rounded-lg text-emerald-600 bg-emerald-50">Beranda</button>
-                    <button onclick="navigateTo('materi')" id="nav-materi" class="px-3 py-2 rounded-lg hover:text-emerald-600">Materi</button>
-                    <button onclick="navigateTo('pretest')" id="nav-pretest" class="px-3 py-2 rounded-lg hover:text-emerald-600">Pre-Test</button>
-                    <button onclick="navigateTo('posttest')" id="nav-posttest" class="px-3 py-2 rounded-lg hover:text-emerald-600">Post-Test</button>
+                    <button onclick="navigateTo('home')" id="nav-home" class="px-3 py-2 rounded-lg text-emerald-600 bg-emerald-50 cursor-pointer">Beranda</button>
+                    <button onclick="navigateTo('materi')" id="nav-materi" class="px-3 py-2 rounded-lg hover:text-emerald-600 cursor-pointer">Materi</button>
+                    <button onclick="navigateTo('pretest')" id="nav-pretest" class="px-3 py-2 rounded-lg hover:text-emerald-600 cursor-pointer">Pre-Test</button>
+                    <button onclick="navigateTo('posttest')" id="nav-posttest" class="px-3 py-2 rounded-lg hover:text-emerald-600 cursor-pointer">Post-Test</button>
                 </div>
                 
                 <div class="relative">
@@ -238,7 +253,7 @@
 
                     <div class="flex justify-between items-center mt-6 pt-4 border-t border-slate-100">
                         <button id="btn-quiz-prev" onclick="navigateQuizQuestion(-1)" class="px-4 py-2 border border-slate-200 rounded-xl text-xs font-medium text-slate-500 hover:bg-slate-50 disabled:opacity-40 cursor-pointer">‹ Soal Sebelumnya</button>
-                        <button id="btn-quiz-action" onclick="handleQuizAction()" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold cursor-pointer">Kunci Jawaban</button>
+                        <button id="btn-quiz-action" onclick="handleQuizAction()" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold cursor-pointer">Soal Berikutnya ›</button>
                     </div>
                 </div>
             </div>
@@ -279,13 +294,13 @@
                         <div class="text-sm font-black text-emerald-600 mt-0.5" id="res-qualification-text">-</div>
                     </div>
 
-                    <div class="flex justify-between gap-3 pt-2">
+                    <div class="flex justify-between gap-3 pt-2 no-print">
                         <button onclick="navigateTo('home')" class="px-4 py-2 border border-slate-200 text-slate-600 rounded-xl text-xs font-medium hover:bg-slate-50 cursor-pointer">Kembali</button>
                         <button onclick="window.print()" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-sm cursor-pointer"><i class="fa-solid fa-print mr-1"></i> Cetak Hasil</button>
                     </div>
                 </div>
 
-                <div class="lg:col-span-5 bg-white rounded-2xl border border-slate-100 shadow-sm p-6 space-y-4">
+                <div class="lg:col-span-5 bg-white rounded-2xl border border-slate-100 shadow-sm p-6 space-y-4 no-print">
                     <h3 class="font-bold text-xs text-slate-800 uppercase tracking-wider">Tips Pola Makan Sehat</h3>
                     <ul class="space-y-2 text-[11px] text-slate-600 list-none">
                         <li class="flex items-start gap-2"><i class="fa-solid fa-circle-check text-emerald-500 mt-0.5"></i> Makan makanan beragam dan bergizi.</li>
@@ -299,21 +314,36 @@
             </div>
         </section>
 
-        <section id="page-admin" class="page-section max-w-6xl mx-auto">
-            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-md mt-4 space-y-6">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b pb-4">
-                    <div>
-                        <h2 class="text-xl font-bold text-slate-800"><i class="fa-solid fa-database text-emerald-600 mr-2"></i>Rekap Data Nilai Siswa</h2>
-                        <p class="text-xs text-slate-400">Dashboard Khusus Guru Pembimbing - SMAN 1 Parepare</p>
-                    </div>
-                    <div class="flex gap-2 w-full sm:w-auto">
-                        <button onclick="eksporDataCSV()" class="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-xs cursor-pointer"><i class="fa-solid fa-file-excel"></i> Ekspor Excel/CSV</button>
-                        <button onclick="bersihkanSemuaData()" class="px-3 py-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl text-xs font-bold flex items-center gap-1.5 cursor-pointer"><i class="fa-solid fa-trash-can"></i> Reset Data</button>
-                    </div>
+        <section id="page-admin" class="page-section max-w-6xl mx-auto space-y-6">
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-md flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <span class="text-[10px] bg-emerald-50 text-emerald-700 font-extrabold px-2.5 py-1 rounded-full uppercase tracking-wider"> Panel Kontrol Guru </span>
+                    <h2 class="text-xl font-black text-slate-950 mt-1.5 tracking-tight flex items-center gap-2">
+                        <i class="fa-solid fa-database text-emerald-600"></i> Rekapitulasi Nilai Evaluasi Siswa
+                    </h2>
+                    <p class="text-xs text-slate-500 mt-0.5"> Aplikasi EduGizi Kelompok 4 • <span class="font-semibold text-slate-700">SMAN 1 Parepare</span> </p>
                 </div>
+                <div class="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200/60">
+                    <span class="relative flex h-2 w-2">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                    </span>
+                    <span id="db-sync-status" class="text-[11px] font-bold text-slate-600">Database Terhubung</span>
+                </div>
+            </div>
 
-                <div class="overflow-x-auto rounded-xl border border-slate-100">
-                    <table class="w-full text-left border-collapse text-xs">
+            <div class="flex justify-between items-center gap-2">
+                <button onclick="eksporDataCSV()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer shadow-sm">
+                    <i class="fa-solid fa-file-excel"></i> Ekspor ke Excel (.CSV)
+                </button>
+                <button onclick="bersihkanSemuaData()" class="px-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl text-xs font-bold transition cursor-pointer">
+                    <i class="fa-solid fa-trash-can"></i> Reset Data
+                </button>
+            </div>
+
+            <div class="bg-white border border-slate-100 rounded-2xl shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs border-collapse">
                         <thead>
                             <tr class="bg-slate-50 text-slate-500 font-bold border-b border-slate-100">
                                 <th class="p-4">No</th>
@@ -328,16 +358,18 @@
                         <tbody id="tabel-rekap-body" class="divide-y divide-slate-100 font-medium text-slate-700"></tbody>
                     </table>
                 </div>
-                
-                <div class="pt-2">
-                    <button onclick="handleLogout()" class="px-4 py-2 border border-slate-200 text-slate-500 rounded-xl text-xs font-semibold hover:bg-slate-50 cursor-pointer">‹ Keluar & Logout Kembali</button>
-                </div>
+            </div>
+            
+            <div class="pt-2">
+                <button onclick="handleLogout()" class="px-4 py-2 border border-slate-200 text-slate-500 rounded-xl text-xs font-semibold hover:bg-slate-50 cursor-pointer">‹ Keluar & Logout Kembali</button>
             </div>
         </section>
 
     </main>
 
     <script>
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbhw4y4XRv9x5SLT3d2owUbKOraUJHzSog7209grSgqRXzLK7J34wnfyFQQGVdyjV-t/exec";
+
         let namaSiswa = "";
         let kelasSiswa = "";
         let tipeKuisAktif = "pretest";
@@ -347,551 +379,411 @@
         let nilaiPreTestSiswa = 0;
         let nilaiPostTestSiswa = 0;
         let logoClickCount = 0;
+        let adminIntervalTimer = null;
 
         const databaseMateri = [
-            { title: "1. Pengertian Gizi Seimbang", content: "<p>Gizi seimbang adalah susunan makanan sehari-hari yang mengandung zat gizi dalam jenis and jumlah yang sesuai dengan kebutuhan tubuh, dengan memperhatikan prinsip keanekaragaman pangan, aktivitas fisik, perilaku hidup bersih, and mempertahankan berat badan normal untuk mencegah masalah gizi.</p><p class='font-semibold text-emerald-600 mt-2'>Manfaat Gizi Seimbang:</p><ul class='list-disc pl-4 space-y-0.5'><li>Menjaga kesehatan tubuh</li><li>Mendukung pertumbuhan</li><li>Meningkatkan daya tahan</li></ul>" },
+            { title: "1. Pengertian Gizi Seimbang", content: "<p>Gizi seimbang adalah susunan makanan sehari-hari yang mengandung zat gizi dalam jenis dan jumlah yang sesuai dengan kebutuhan tubuh, dengan memperhatikan prinsip keanekaragaman pangan, aktivitas fisik, perilaku hidup bersih, dan mempertahankan berat badan normal untuk mencegah masalah gizi.</p><p class='font-semibold text-emerald-600 mt-2'>Manfaat Gizi Seimbang:</p><ul class='list-disc pl-4 space-y-0.5'><li>Menjaga kesehatan tubuh</li><li>Mendukung pertumbuhan</li><li>Meningkatkan daya tahan</li></ul>" },
             { title: "2. Zat Gizi", content: "<p>Zat gizi terdiri atas Zat Gizi Makro (Karbohidrat, Protein, Lemak) yang dibutuhkan dalam jumlah besar sebagai sumber energi, serta Zat Gizi Mikro (Vitamin & Mineral) yang mengatur kelancaran fungsi metabolisme sel tubuh.</p>" },
             { title: "3. Pola Makan Sehat Remaja", content: "<p>Remaja membutuhkan asupan kalori efisien karena pertumbuhan fisik berjalan sangat pesat. Menjaga pola makan 3 kali sehari secara teratur membantu konsentrasi belajar tetap optimal.</p>" },
-            { title: "4. Isi Piringku", content: "<p>Slogan pengganti 4 Sehat 5 Sempurna. Mengatur porsi dalam satu piring: 1/3 bagian makanan pokok, 1/3 bagian sayuran, 1/6 bagian lauk-pauk, and 1/6 bagian buah-buahan.</p>" },
+            { title: "4. Isi Piringku", content: "<p>Slogan pengganti 4 Sehat 5 Sempurna. Mengatur porsi dalam satu piring: 1/3 bagian makanan pokok, 1/3 bagian sayuran, 1/6 bagian lauk-pauk, dan 1/6 bagian buah-buahan.</p>" },
             { title: "5. Pentingnya Sarapan", content: "<p>Sarapan membekali energi glukosa bagi otak setelah berpuasa semalaman. Remaja yang rutin sarapan terbukti memiliki performa akademis yang jauh lebih baik di sekolah.</p>" },
             { title: "6. Program Makanan Bergizi Gratis", content: "<p>Program sekolah yang bertujuan memastikan pemerataan kecukupan gizi hewani, energi, dan serat bagi seluruh siswa demi mewujudkan generasi emas Indonesia merdeka stunting.</p>" }
         ];
 
         const databaseSoal = [
-            { q: "Berikut yang termasuk sumber protein hewani untuk pertumbuhan remaja adalah...", o: ["Nasi putih", "Minyak kelapa", "Telur", "Gula"], c: 2, exp: "Telur merupakan sumber protein yang berfungsi untuk membangun dan memperbaiki jaringan tubuh serta mendukung pertumbuhan." },
-            { q: "Zat gizi makro yang berfungsi sebagai sumber energi utama tubuh adalah...", o: ["Karbohidrat", "Vitamin C", "Zat Besi", "Kalsium"], c: 0, exp: "Karbohidrat adalah bahan bakar utama metabolisme tubuh." },
-            { q: "Porsi sayuran dalam aturan panduan 'Isi Piringku' yang ideal memenuhi...", o: ["Sepertiga (1/3) dari piring", "Hanya 5% piring", "Setengah sendok", "Seluruh piring"], c: 0, exp: "Porsi sayur ideal setara dengan porsi makanan pokok yaitu sepertiga piring." },
-            { q: "Dampak buruk bagi remaja jika sering melewatkan waktu sarapan pagi adalah...", o: ["Sulit berkonsentrasi", "Badan terlalu tinggi", "Gigi menjadi kuat", "Mata makin tajam"], c: 0, exp: "Kekurangan pasokan glukosa di pagi hari menurunkan daya konsentrasi otak." },
-            { q: "Penyakit anemia pada remaja disebabkan karena tubuh kekurangan zat gizi mikro...", o: ["Zat Besi", "Vitamin E", "Karbohidrat", "Lemak jenuh"], c: 0, exp: "Zat besi diperlukan tubuh untuk memproduksi sel darah merah pengikat oksigen." },
-            { q: "Berikut yang bukan termasuk dalam pilar Gizi Seimbang adalah...", o: ["Melakukan aktivitas fisik", "Mencuci tangan dengan sabun", "Minum soda setiap hari", "Memantau berat badan"], c: 2, exp: "Soda mengandung gula tinggi dan tidak mendukung pola hidup sehat." },
-            { q: "Manakah contoh kombinasi sarapan yang paling sehat dan seimbang?", o: ["Nasi, mie instan, dan kerupuk", "Nasi, telur dadar, dan sayur", "Sirup manis dan gorengan", "Hanya minum air teh"], c: 1, exp: "Kombinasi tersebut mengandung karbohidrat, protein, dan serat lengkap." },
-            { q: "Zat gizi mikro yang banyak terkandung dalam buah jeruk dan mangga adalah...", o: ["Vitamin C", "Karbohidrat complexes", "Laktosa", "Protein nabati"], c: 0, exp: "Jeruk dan mangga merupakan buah-buahan sumber utama Vitamin C alami." },
-            { q: "Mengapa program Makanan Bergizi Gratis penting diterapkan bagi siswa?", o: ["Supaya mengantuk", "Mencegah stunting & meningkatkan prestasi", "Hanya pelengkap waktu luang", "Mengurangi jam belajar"], c: 1, exp: "Kecukupan zat gizi meningkatkan fokus belajar dan stamina imunitas tubuh." },
-            { q: "Aktivitas fisik yang dianjurkan untuk mendukung kesehatan tubuh minimal dilakukan selama...", o: ["30 menit sehari", "2 menit seminggu", "24 jam nonstop", "Satu bulan sekali"], c: 0, exp: "Aktivitas fisik sedang minimal 30 menit sehari menjaga kebugaran jantung." }
+            { q: "Berikut yang termasuk sumber protein hewani untuk pertumbuhan remaja adalah...", o: ["Nasi putih", "Minyak kelapa", "Telur", "Gula"], c: 2 },
+            { q: "Zat gizi makro yang berfungsi sebagai sumber energi utama tubuh adalah...", o: ["Karbohidrat", "Vitamin C", "Zat Besi", "Kalsium"], c: 0 },
+            { q: "Porsi sayuran dalam aturan panduan 'Isi Piringku' yang ideal memenuhi...", o: ["Sepertiga (1/3) dari piring", "Hanya 5% piring", "Setengah sendok", "Seluruh piring"], c: 0 },
+            { q: "Dampak buruk bagi remaja jika sering melewatkan waktu sarapan pagi adalah...", o: ["Sulit berkonsentrasi", "Badan terlalu tinggi", "Gigi menjadi kuat", "Mata makin tajam"], c: 0 },
+            { q: "Penyakit anemia pada remaja disebabkan karena tubuh kekurangan zat gizi mikro...", o: ["Zat Besi", "Vitamin E", "Karbohidrat", "Lemak jenuh"], c: 0 },
+            { q: "Berikut yang bukan termasuk dalam pilar Gizi Seimbang adalah...", o: ["Melakukan aktivitas fisik", "Mencuci tangan dengan sabun", "Minum soda setiap hari", "Memantau berat badan"], c: 2 },
+            { q: "Manakah contoh kombinasi sarapan yang paling sehat dan seimbang?", o: ["Nasi, mie instan, dan kerupuk", "Nasi, telur dadar, dan sayur", "Sirup manis dan gorengan", "Hanya minum air teh"], c: 1 },
+            { q: "Zat gizi mikro yang banyak terkandung dalam buah jeruk dan mangga adalah...", o: ["Vitamin C", "Karbohidrat complexes", "Laktosa", "Protein nabati"], c: 0 },
+            { q: "Mengapa program Makanan Bergizi Gratis penting diterapkan bagi siswa?", o: ["Supaya mengantuk", "Mencegah stunting & meningkatkan prestasi", "Hanya pelengkap waktu luang", "Mengurangi jam belajar"], c: 1 },
+            { q: "Aktivitas fisik ringan hingga sedang yang dianjurkan untuk mendukung porsi metabolisme tubuh minimal dilakukan selama...", o: ["30 menit sehari", "24 jam nonstop", "1 menit setahun", "Hanya saat tidur"], c: 0 }
         ];
 
-        let jawabanSiswa = Array(databaseSoal.length).fill(null);
-        let statusKunciSoal = Array(databaseSoal.length).fill(false);
-        let countdownTimer = null;
+        let jawabanSiswa = [];
+        let kuisTimerInterval = null;
+        const KUIS_DURASI_DETIK = 20 * 60; // 20 Menit
+        let kuisSisaWaktu = KUIS_DURASI_DETIK;
 
-        function handleLogin(event) {
-            event.preventDefault();
-            namaSiswa = document.getElementById("input-nama").value.trim();
-            kelasSiswa = document.getElementById("input-kelas").value;
-
-            if(namaSiswa && kelasSiswa) {
-                let localData = JSON.parse(localStorage.getItem("edugizi_scores")) || [];
-                let existingRecord = localData.find(item => item.nama.toLowerCase() === namaSiswa.toLowerCase() && item.kelas === kelasSiswa);
-                if(existingRecord) {
-                    nilaiPreTestSiswa = existingRecord.pretest;
-                    nilaiPostTestSiswa = existingRecord.posttest;
-                } else {
-                    nilaiPreTestSiswa = 0;
-                    nilaiPostTestSiswa = 0;
-                }
-
-                document.getElementById("user-display-name").innerText = namaSiswa;
-                document.getElementById("page-login").classList.remove("active");
-                document.getElementById("global-navbar").classList.remove("hidden");
-                document.getElementById("main-content-area").classList.remove("hidden");
-                
-                navigateTo('home');
-                initMateriSidebar();
-            }
-        }
-
+        // --- MANAJEMEN ROUTING HALAMAN ---
         function navigateTo(pageId) {
-            document.getElementById("profile-dropdown-menu").classList.add("hidden");
-
-            if (pageId === 'pretest' || pageId === 'posttest') {
-                tipeKuisAktif = pageId;
-                setupQuizWelcomePage();
-                pageId = 'quiz-welcome';
+            if (!namaSiswa && pageId !== 'login') {
+                alert("Silakan masukkan nama dan kelas terlebih dahulu!");
+                navigateTo('login');
+                return;
             }
 
-            const sections = document.querySelectorAll(".page-section");
-            sections.forEach(sec => sec.classList.remove("active"));
-            
-            const targetSection = document.getElementById(`page-${pageId}`);
-            if (targetSection) targetSection.classList.add("active");
+            document.querySelectorAll('.page-section').forEach(sec => sec.classList.remove('active'));
+            const targetPage = document.getElementById(`page-${pageId}`);
+            if (targetPage) targetPage.classList.add('active');
 
-            const navButtons = document.querySelectorAll("#main-nav button");
-            navButtons.forEach(btn => {
-                btn.classList.remove("text-emerald-600", "bg-emerald-50");
-                btn.classList.add("hover:text-emerald-600");
+            document.querySelectorAll('#main-nav button').forEach(btn => {
+                btn.classList.remove('text-emerald-600', 'bg-emerald-50');
+                btn.classList.add('hover:text-emerald-600');
             });
-
-            const activeNavId = (pageId === 'quiz-welcome' || pageId === 'quiz-play' || pageId === 'result') ? `nav-${tipeKuisAktif}` : `nav-${pageId}`;
-            const activeNavBtn = document.getElementById(activeNavId);
+            const activeNavBtn = document.getElementById(`nav-${pageId}`);
             if (activeNavBtn) {
-                activeNavBtn.classList.add("text-emerald-600", "bg-emerald-50");
-                activeNavBtn.classList.remove("hover:text-emerald-600");
+                activeNavBtn.classList.add('text-emerald-600', 'bg-emerald-50');
+                activeNavBtn.classList.remove('hover:text-emerald-600');
             }
 
             if (pageId === 'materi') {
-                renderMateriContent();
+                renderMateriSidebar();
+                loadMateriPage(currentMateriIndex);
+            } else if (pageId === 'pretest') {
+                initWelcomeQuiz('pretest');
+            } else if (pageId === 'posttest') {
+                initWelcomeQuiz('posttest');
             } else if (pageId === 'admin') {
-                renderRekapAdmin();
+                startAdminAutoRefresh();
             }
+
+            if (pageId !== 'admin') stopAdminAutoRefresh();
         }
 
-        function handleLogoClick() {
-            logoClickCount++;
-            if (logoClickCount >= 5) {
-                logoClickCount = 0;
-                aksesAdminDenganSandi();
-            } else {
-                navigateTo('home');
+        // --- SISTEM OTENTIKASI & USER PROFIL ---
+        function handleLogin(e) {
+            e.preventDefault();
+            const inputNama = document.getElementById('input-nama').value.trim();
+            const inputKelas = document.getElementById('input-kelas').value;
+
+            if (!inputNama || !inputKelas) {
+                alert("Mohon isi semua data formulir login!");
+                return;
             }
+
+            namaSiswa = inputNama;
+            kelasSiswa = inputKelas;
+
+            document.getElementById('user-display-name').innerText = namaSiswa;
+            document.getElementById('global-navbar').classList.remove('hidden');
+            document.getElementById('main-content-area').classList.remove('hidden');
+
+            navigateTo('home');
         }
 
-        function initMateriSidebar() {
-            const sidebar = document.getElementById("materi-sidebar");
+        function handleLogout() {
+            namaSiswa = ""; kelasSiswa = ""; nilaiPreTestSiswa = 0; nilaiPostTestSiswa = 0;
+            jawabanSiswa = []; clearInterval(kuisTimerInterval);
+
+            document.getElementById('input-nama').value = "";
+            document.getElementById('input-kelas').selectedIndex = 0;
+            document.getElementById('global-navbar').classList.add('hidden');
+            document.getElementById('main-content-area').classList.add('hidden');
+
+            navigateTo('login');
+        }
+
+        function toggleProfileDropdown(e) {
+            e.stopPropagation();
+            document.getElementById('profile-dropdown-menu').classList.toggle('hidden');
+        }
+
+        function closeProfileDropdown(e) {
+            document.getElementById('profile-dropdown-menu').classList.add('hidden');
+        }
+
+        // --- MANAJEMEN HALAMAN MODUL MATERI ---
+        function renderMateriSidebar() {
+            const sidebar = document.getElementById('materi-sidebar');
             sidebar.innerHTML = '<h3 class="font-bold text-[10px] text-slate-400 uppercase tracking-wider px-2 mb-3">Daftar Materi</h3>';
             
-            databaseMateri.forEach((mat, idx) => {
-                const btn = document.createElement("button");
-                btn.id = `btn-mat-side-${idx}`;
-                btn.className = "w-full text-left px-3 py-2 text-xs font-semibold rounded-xl transition cursor-pointer text-slate-600 hover:bg-slate-50 hover:text-emerald-600 flex items-center gap-2";
-                btn.innerHTML = `<i class="fa-regular fa-file-lines text-sm opacity-60"></i> <span class="truncate">${mat.title}</span>`;
+            databaseMateri.forEach((item, index) => {
+                const btn = document.createElement('button');
+                btn.className = `w-full text-left px-3 py-2 text-xs font-semibold rounded-xl transition cursor-pointer text-ellipsis overflow-hidden whitespace-nowrap ${index === currentMateriIndex ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 hover:bg-slate-50'}`;
+                btn.innerText = item.title;
                 btn.onclick = () => {
-                    currentMateriIndex = idx;
-                    renderMateriContent();
+                    currentMateriIndex = index;
+                    renderMateriSidebar();
+                    loadMateriPage(index);
                 };
                 sidebar.appendChild(btn);
             });
         }
 
-        function renderMateriContent() {
-            const mat = databaseMateri[currentMateriIndex];
-            document.getElementById("materi-title").innerText = mat.title;
-            document.getElementById("materi-body").innerHTML = mat.content;
+        function loadMateriPage(index) {
+            const materi = databaseMateri[index];
+            document.getElementById('materi-title').innerText = materi.title;
+            document.getElementById('materi-body').innerHTML = materi.content;
 
-            databaseMateri.forEach((_, idx) => {
-                const btn = document.getElementById(`btn-mat-side-${idx}`);
-                if (btn) {
-                    if (idx === currentMateriIndex) {
-                        btn.className = "w-full text-left px-3 py-2 text-xs font-bold rounded-xl transition cursor-pointer bg-emerald-50 text-emerald-600 flex items-center gap-2";
-                    } else {
-                        btn.className = "w-full text-left px-3 py-2 text-xs font-semibold rounded-xl transition cursor-pointer text-slate-600 hover:bg-slate-50 hover:text-emerald-600 flex items-center gap-2";
-                    }
-                }
-            });
-
-            document.getElementById("btn-mat-prev").disabled = (currentMateriIndex === 0);
-            const nextBtn = document.getElementById("btn-mat-next");
-            if (currentMateriIndex === databaseMateri.length - 1) {
-                nextBtn.innerHTML = `Selesai Membaca <i class="fa-solid fa-check ml-1"></i>`;
-                nextBtn.onclick = () => navigateTo('home');
+            document.getElementById('btn-mat-prev').disabled = (index === 0);
+            const nextBtn = document.getElementById('btn-mat-next');
+            if (index === databaseMateri.length - 1) {
+                nextBtn.innerText = "Selesai Belajar ✓";
+                nextBtn.onclick = () => navigateTo('posttest');
             } else {
-                nextBtn.innerHTML = `Materi Selanjutnya ›`;
+                nextBtn.innerText = "Materi Selanjutnya ›";
                 nextBtn.onclick = () => changeMateriPage(1);
             }
         }
 
         function changeMateriPage(dir) {
             currentMateriIndex += dir;
-            if (currentMateriIndex < 0) currentMateriIndex = 0;
-            if (currentMateriIndex >= databaseMateri.length) currentMateriIndex = databaseMateri.length - 1;
-            renderMateriContent();
+            renderMateriSidebar();
+            loadMateriPage(currentMateriIndex);
         }
 
-        function setupQuizWelcomePage() {
-            const title = document.getElementById("quiz-welcome-title");
-            const desc = document.getElementById("quiz-welcome-desc");
-            const triggerBtn = document.getElementById("btn-start-quiz-trigger");
-
-            if (tipeKuisAktif === "pretest") {
-                title.innerText = "Evaluasi Pre-Test Gizi";
-                desc.innerText = "Uji pemahaman awalmu mengenai nutrisi, piramida gizi seimbang, dan pola hidup sehat remaja sebelum mendalami seluruh rangkuman materi edukasi.";
-                triggerBtn.className = "w-full sm:w-auto px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-md flex items-center justify-center gap-2 cursor-pointer";
-            } else {
-                title.innerText = "Evaluasi Post-Test Gizi";
-                desc.innerText = "Ukur tingkat pemahaman akhirmu setelah membaca materi. Evaluasi ini bertujuan mengukur efektivitas peningkatan poin wawasan gizi Anda.";
-                triggerBtn.className = "w-full sm:w-auto px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-md flex items-center justify-center gap-2 cursor-pointer";
-            }
+        // --- SISTEM ENGINE KUIS ---
+        function initWelcomeQuiz(tipe) {
+            tipeKuisAktif = tipe;
+            document.getElementById('quiz-welcome-title').innerText = tipe === 'pretest' ? 'Evaluasi Awal (Pre-Test)' : 'Evaluasi Akhir (Post-Test)';
+            document.getElementById('quiz-welcome-desc').innerText = tipe === 'pretest' 
+                ? 'Kuis ini bertujuan untuk mengukur sejauh mana pemahaman awal kamu mengenai materi gizi seimbang sebelum membaca modul edukasi.' 
+                : 'Kuis ini bertujuan untuk mengukur tingkat peningkatan pemahaman kamu setelah mempelajari seluruh rangkaian modul edukasi EduGizi.';
+            
+            document.getElementById('page-quiz-welcome').classList.add('active');
         }
 
         function startQuizGameplay() {
-            jawabanSiswa = Array(databaseSoal.length).fill(null);
-            statusKunciSoal = Array(databaseSoal.length).fill(false);
+            document.getElementById('page-quiz-welcome').classList.remove('active');
+            document.getElementById('page-quiz-play').classList.add('active');
+
             currentQuizIndex = 0;
+            kuisSisaWaktu = KUIS_DURASI_DETIK;
+            jawabanSiswa = new Array(databaseSoal.length).fill(null);
 
-            buildQuizNumberNavigation();
-            renderQuizQuestion();
-            startQuizCountdown(20 * 60);
-
-            navigateTo('quiz-play');
+            renderQuizNavNumbers();
+            loadQuizQuestion(0);
+            startQuizTimer();
         }
 
-        function buildQuizNumberNavigation() {
-            const container = document.getElementById("quiz-nav-nums");
+        function startQuizTimer() {
+            clearInterval(kuisTimerInterval);
+            kuisTimerInterval = setInterval(() => {
+                kuisSisaWaktu--;
+                const menit = Math.floor(kuisSisaWaktu / 60);
+                const detik = kuisSisaWaktu % 60;
+                document.getElementById('quiz-timer').innerText = `${String(menit).padStart(2, '0')}:${String(detik).padStart(2, '0')}`;
+
+                if (kuisSisaWaktu <= 0) {
+                    clearInterval(kuisTimerInterval);
+                    alert("Waktu pengerjaan kuis telah habis!");
+                    autoSubmitQuiz();
+                }
+            }, 1000);
+        }
+
+        function renderQuizNavNumbers() {
+            const container = document.getElementById('quiz-nav-nums');
             container.innerHTML = "";
-            databaseSoal.forEach((_, idx) => {
-                const btn = document.createElement("button");
-                btn.id = `btn-quiz-nav-${idx}`;
-                btn.className = "w-full py-2.5 rounded-lg border text-xs font-bold transition text-center cursor-pointer border-slate-200 text-slate-500 hover:bg-slate-50";
-                btn.innerText = idx + 1;
+
+            databaseSoal.forEach((_, index) => {
+                const btn = document.createElement('button');
+                btn.className = `p-2 text-center text-xs font-bold rounded-lg border transition cursor-pointer ${jawabanSiswa[index] !== null ? 'bg-emerald-50 text-emerald-700 border-emerald-300' : 'bg-slate-50 text-slate-500 border-slate-200'}`;
+                if (index === currentQuizIndex) btn.classList.add('ring-2', 'ring-emerald-500');
+                btn.innerText = index + 1;
                 btn.onclick = () => {
-                    currentQuizIndex = idx;
-                    renderQuizQuestion();
+                    currentQuizIndex = index;
+                    renderQuizNavNumbers();
+                    loadQuizQuestion(index);
                 };
                 container.appendChild(btn);
             });
         }
 
-        function renderQuizQuestion() {
-            const soal = databaseSoal[currentQuizIndex];
-            document.getElementById("quiz-header-index").innerText = `Soal ${currentQuizIndex + 1} dari ${databaseSoal.length}`;
-            document.getElementById("quiz-question-text").innerText = soal.q;
+        function loadQuizQuestion(index) {
+            const soal = databaseSoal[index];
+            document.getElementById('quiz-header-index').innerText = `Soal ${index + 1} dari ${databaseSoal.length}`;
+            document.getElementById('quiz-question-text').innerText = soal.q;
 
-            const optionsContainer = document.getElementById("quiz-options-container");
+            const optionsContainer = document.getElementById('quiz-options-container');
             optionsContainer.innerHTML = "";
 
-            const isLocked = statusKunciSoal[currentQuizIndex];
-
-            soal.o.forEach((opt, oIdx) => {
-                const btn = document.createElement("button");
-                btn.className = "w-full text-left px-4 py-3 text-xs font-medium rounded-xl border transition flex items-center gap-3 cursor-pointer ";
-                
-                if (jawabanSiswa[currentQuizIndex] === oIdx) {
-                    if (isLocked) {
-                        if (oIdx === soal.c) {
-                            btn.className += "bg-emerald-50 border-emerald-500 text-emerald-700 font-bold";
-                        } else {
-                            btn.className += "bg-red-50 border-red-400 text-red-700 font-bold";
-                        }
-                    } else {
-                        btn.className += "bg-emerald-50 border-emerald-500 text-emerald-700 font-bold ring-2 ring-emerald-500/10";
-                    }
-                } else {
-                    if (isLocked && oIdx === soal.c) {
-                        btn.className += "bg-emerald-50 border-emerald-500 text-emerald-700 font-bold";
-                    } else {
-                        btn.className += "bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100";
-                    }
-                }
-
-                if (isLocked) btn.disabled = true;
-
-                const opsiHuruf = String.fromCharCode(65 + oIdx);
-                btn.innerHTML = `<span class="w-6 h-6 flex items-center justify-center rounded-lg bg-white border border-inherit font-bold text-[10px] shadow-2xs">${opsiHuruf}</span> <span class="flex-1">${opt}</span>`;
-                
+            soal.o.forEach((opsi, oIdx) => {
+                const isSelected = jawabanSiswa[index] === oIdx;
+                const btn = document.createElement('button');
+                btn.className = `w-full text-left p-3 text-xs font-medium rounded-xl border transition flex items-center gap-3 cursor-pointer ${isSelected ? 'bg-emerald-50 border-emerald-500 text-emerald-900 font-semibold' : 'bg-white hover:bg-slate-50 border-slate-200 text-slate-700'}`;
+                btn.innerHTML = `<span class="w-5 h-5 flex items-center justify-center rounded-full text-[10px] font-bold ${isSelected ? 'bg-emerald-600 text-white' : 'bg-slate-100 text-slate-500'}">${String.fromCharCode(65 + oIdx)}</span> ${opsi}`;
                 btn.onclick = () => {
-                    jawabanSiswa[currentQuizIndex] = oIdx;
-                    renderQuizQuestion();
-                    updateQuizNavNumbersStyle();
+                    jawabanSiswa[index] = oIdx;
+                    renderQuizNavNumbers();
+                    loadQuizQuestion(index);
                 };
-
                 optionsContainer.appendChild(btn);
             });
 
-            const feedbackBox = document.getElementById("quiz-feedback-box");
-            if (isLocked) {
-                feedbackBox.classList.remove("hidden");
-                const isCorrect = jawabanSiswa[currentQuizIndex] === soal.c;
-                feedbackBox.innerHTML = `
-                    <div class="p-3.5 rounded-xl border ${isCorrect ? 'bg-emerald-50/50 border-emerald-200 text-emerald-800' : 'bg-orange-50/50 border-orange-200 text-orange-800'} text-[11px] leading-relaxed">
-                        <div class="font-bold flex items-center gap-1.5 mb-0.5 text-xs">
-                            ${isCorrect ? '<i class="fa-solid fa-circle-check text-emerald-600"></i> Jawaban Anda Benar!' : '<i class="fa-solid fa-circle-xmark text-red-500"></i> Jawaban Kurang Tepat!'}
-                        </div>
-                        <strong>Pembahasan:</strong> ${soal.exp}
-                    </div>`;
+            document.getElementById('btn-quiz-prev').disabled = (index === 0);
+            const actionBtn = document.getElementById('btn-quiz-action');
+            if (index === databaseSoal.length - 1) {
+                actionBtn.innerText = "Kirim & Selesai";
+                actionBtn.className = "px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold cursor-pointer";
             } else {
-                feedbackBox.classList.add("hidden");
+                actionBtn.innerText = "Soal Berikutnya ›";
+                actionBtn.className = "px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-semibold cursor-pointer";
             }
-
-            document.getElementById("btn-quiz-prev").disabled = (currentQuizIndex === 0);
-            
-            const actionBtn = document.getElementById("btn-quiz-action");
-            if (isLocked) {
-                if (currentQuizIndex === databaseSoal.length - 1) {
-                    actionBtn.className = "px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold cursor-pointer";
-                    actionBtn.innerHTML = `Selesai & Lihat Hasil <i class="fa-solid fa-square-poll-vertical ml-1"></i>`;
-                } else {
-                    actionBtn.className = "px-5 py-2 bg-slate-700 hover:bg-slate-800 text-white rounded-xl text-xs font-semibold cursor-pointer";
-                    actionBtn.innerHTML = `Soal Berikutnya ›`;
-                }
-            } else {
-                actionBtn.className = "px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold cursor-pointer";
-                actionBtn.innerHTML = `<i class="fa-solid fa-key text-[10px] mr-1"></i> Kunci Jawaban`;
-            }
-
-            updateQuizNavNumbersStyle();
-        }
-
-        function updateQuizNavNumbersStyle() {
-            databaseSoal.forEach((_, idx) => {
-                const btn = document.getElementById(`btn-quiz-nav-${idx}`);
-                if (!btn) return;
-
-                let classes = "w-full py-2 rounded-lg border text-xs font-bold text-center cursor-pointer ";
-                
-                if (idx === currentQuizIndex) {
-                    classes += "border-slate-800 text-slate-900 bg-slate-100 ring-1 ring-slate-800/20";
-                } else if (statusKunciSoal[idx]) {
-                    const isCorrect = jawabanSiswa[idx] === databaseSoal[idx].c;
-                    classes += isCorrect ? "bg-emerald-50 border-emerald-300 text-emerald-600" : "bg-red-50 border-red-200 text-red-500";
-                } else if (jawabanSiswa[idx] !== null) {
-                    classes += "bg-blue-50 border-blue-300 text-blue-600";
-                } else {
-                    classes += "border-slate-200 text-slate-400 bg-white hover:bg-slate-50";
-                }
-                
-                btn.className = classes;
-            });
-        }
-
-        function handleQuizAction() {
-            const isLocked = statusKunciSoal[currentQuizIndex];
-            
-            if (!isLocked) {
-                if (jawabanSiswa[currentQuizIndex] === null) {
-                    alert("Silakan pilih salah satu jawaban terlebih dahulu sebelum mengunci!");
-                    return;
-                }
-                statusKunciSoal[currentQuizIndex] = true;
-                renderQuizQuestion();
-            } else {
-                if (currentQuizIndex === databaseSoal.length - 1) {
-                    prosesKalkulasiSkorAkhir();
-                } else {
-                    currentQuizIndex++;
-                    renderQuizQuestion();
-                }
-            }
-        }
-
-        function startQuizCountdown(seconds) {
-            clearInterval(countdownTimer);
-            const timerDisplay = document.getElementById("quiz-timer");
-            
-            let remain = seconds;
-            countdownTimer = setInterval(() => {
-                let mins = Math.floor(remain / 60);
-                let secs = remain % 60;
-                
-                timerDisplay.innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-                
-                if (remain <= 0) {
-                    clearInterval(countdownTimer);
-                    alert("Waktu pengerjaan ujian Anda telah habis!");
-                    prosesKalkulasiSkorAkhir();
-                }
-                remain--;
-            }, 1000);
         }
 
         function navigateQuizQuestion(dir) {
             currentQuizIndex += dir;
-            if (currentQuizIndex < 0) currentQuizIndex = 0;
-            if (currentQuizIndex >= databaseSoal.length) currentQuizIndex = databaseSoal.length - 1;
-            renderQuizQuestion();
+            renderQuizNavNumbers();
+            loadQuizQuestion(currentQuizIndex);
         }
 
-        function prosesKalkulasiSkorAkhir() {
-            clearInterval(countdownTimer);
+        function handleQuizAction() {
+            if (currentQuizIndex < databaseSoal.length - 1) {
+                navigateQuizQuestion(1);
+            } else {
+                if (jawabanSiswa.includes(null)) {
+                    if (!confirm("Masih ada soal yang belum Anda jawab. Anda yakin ingin menyelesaikan kuis ini?")) return;
+                }
+                autoSubmitQuiz();
+            }
+        }
 
-            let jumlahBenar = 0;
-            databaseSoal.forEach((soal, idx) => {
-                if (jawabanSiswa[idx] === soal.c) jumlahBenar++;
+        function autoSubmitQuiz() {
+            clearInterval(kuisTimerInterval);
+            let jawabanBenar = 0;
+            databaseSoal.forEach((soal, index) => {
+                if (jawabanSiswa[index] === soal.c) jawabanBenar++;
             });
 
-            let nilaiSkor = Math.round((jumlahBenar / databaseSoal.length) * 100);
-
-            if (tipeKuisAktif === "pretest") {
-                nilaiPreTestSiswa = nilaiSkor;
+            const skorAkhir = Math.round((jawabanBenar / databaseSoal.length) * 100);
+            if (tipeKuisAktif === 'pretest') {
+                nilaiPreTestSiswa = skorAkhir;
             } else {
-                nilaiPostTestSiswa = nilaiSkor;
+                nilaiPostTestSiswa = skorAkhir;
             }
 
-            let localData = JSON.parse(localStorage.getItem("edugizi_scores")) || [];
-            let recordIdx = localData.findIndex(item => item.nama.toLowerCase() === namaSiswa.toLowerCase() && item.kelas === kelasSiswa);
-            
-            let waktuSekarang = new Date().toLocaleString('id-ID');
+            showQuizResultView();
+            kirimDataKeCloud();
+        }
 
-            if (recordIdx > -1) {
-                localData[recordIdx].pretest = nilaiPreTestSiswa;
-                localData[recordIdx].posttest = nilaiPostTestSiswa;
-                localData[recordIdx].timestamp = waktuSekarang;
+        function showQuizResultView() {
+            document.getElementById('page-quiz-play').classList.remove('active');
+            document.getElementById('page-result').classList.add('active');
+
+            document.getElementById('res-student-name').innerText = namaSiswa;
+            document.getElementById('res-student-kelas').innerText = kelasSiswa;
+            document.getElementById('res-exam-type').innerText = tipeKuisAktif;
+            document.getElementById('res-score-pre').innerText = nilaiPreTestSiswa;
+            document.getElementById('res-score-post').innerText = nilaiPostTestSiswa;
+
+            const selisih = nilaiPostTestSiswa - nilaiPreTestSiswa;
+            document.getElementById('res-score-diff').innerText = (selisih >= 0 ? `+${selisih}` : selisih);
+
+            const kualifikasiEl = document.getElementById('res-qualification-text');
+            const nilaiAcuan = tipeKuisAktif === 'posttest' ? nilaiPostTestSiswa : nilaiPreTestSiswa;
+
+            if (nilaiAcuan >= 80) {
+                kualifikasiEl.innerText = "SANGAT BAIK & PAHAM GIZI SEIMBANG";
+                kualifikasiEl.className = "text-sm font-black text-emerald-600 mt-0.5";
+            } else if (nilaiAcuan >= 60) {
+                kualifikasiEl.innerText = "CUKUP PAHAM (Perlu Sedikit Mengulas)";
+                kualifikasiEl.className = "text-sm font-black text-amber-500 mt-0.5";
             } else {
-                localData.push({
-                    nama: namaSiswa,
-                    kelas: kelasSiswa,
-                    pretest: nilaiPreTestSiswa,
-                    posttest: nilaiPostTestSiswa,
-                    waktu: waktuSekarang
-                });
+                kualifikasiEl.innerText = "KURANG PAHAM (Sangat Direkomendasikan Baca Ulang Modul)";
+                kualifikasiEl.className = "text-sm font-black text-rose-500 mt-0.5";
             }
-            localStorage.setItem("edugizi_scores", JSON.stringify(localData));
+        }
 
-            const urlScriptGSheets = "https://script.google.com/macros/s/AKfycbYU53ENxWjUXKlVoN2PFXU-v4j9L1M4y8DCDzCXXEuL_gSCnZVNy4ViezPk_7DVjwGL/exec";
+        // --- CLOUD SERVER INTEGRASI (FIXED CORS) ---
+        function kirimDataKeCloud() {
+            if (!SCRIPT_URL) return;
+            const payload = {
+                action: "simpanSkor",
+                nama: namaSiswa,
+                kelas: kelasSiswa,
+                pretest: nilaiPreTestSiswa,
+                posttest: nilaiPostTestSiswa,
+                progres: nilaiPostTestSiswa - nilaiPreTestSiswa,
+                waktu: new Date().toLocaleString("id-ID")
+            };
 
-            fetch(urlScriptGSheets, {
+            // Mengirim data tanpa merusak pipeline pembacaan CORS
+            fetch(SCRIPT_URL, {
                 method: "POST",
-                mode: "no-cors",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    nama: namaSiswa,
-                    kelas: kelasSiswa,
-                    pretest: nilaiPreTestSiswa,
-                    posttest: nilaiPostTestSiswa,
-                    waktu: waktuSekarang
-                })
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify(payload)
             })
-            .then(() => console.log("Data berhasil dikirim ke Google Sheets!"))
-            .catch(err => console.error("Gagal mengirim data:", err));
+            .then(res => console.log("Permintaan sinkronisasi terkirim."))
+            .catch(err => console.error("Gagal sinkronisasi data cloud: ", err));
+        }
 
-            document.getElementById("res-student-name").innerText = namaSiswa;
-            document.getElementById("res-student-kelas").innerText = `Kelas ${kelasSiswa}`;
-            document.getElementById("res-exam-type").innerText = tipeKuisAktif;
-            
-            document.getElementById("res-score-pre").innerText = nilaiPreTestSiswa;
-            document.getElementById("res-score-post").innerText = nilaiPostTestSiswa;
-            
-            let progresPoin = nilaiPostTestSiswa - nilaiPreTestSiswa;
-            const diffDisplay = document.getElementById("res-score-diff");
-            if (progresPoin > 0) {
-                diffDisplay.innerText = `+${progresPoin}`;
-                diffDisplay.className = "text-xl font-black text-emerald-600";
-            } else {
-                diffDisplay.innerText = progresPoin;
-                diffDisplay.className = "text-xl font-black text-slate-500";
+        // --- FITUR PANEL GURU / ADMINISTRATOR ---
+        function handleLogoClick() {
+            logoClickCount++;
+            if (logoClickCount >= 5) {
+                logoClickCount = 0;
+                aksesAdminDenganSandi();
             }
-
-            const qualText = document.getElementById("res-qualification-text");
-            let targetNilaiAcuan = (tipeKuisAktif === "posttest") ? nilaiPostTestSiswa : nilaiPreTestSiswa;
-
-            if (targetNilaiAcuan >= 85) {
-                qualText.innerText = "Sangat Baik & Paham Lengkap";
-                qualText.className = "text-sm font-black text-emerald-600";
-            } else if (targetNilaiAcuan >= 70) {
-                qualText.innerText = "Baik & Cukup Kompeten";
-                qualText.className = "text-sm font-black text-blue-600";
-            } else {
-                qualText.innerText = "Kurang / Perlu Membaca Ulang Materi";
-                qualText.className = "text-sm font-black text-orange-500";
-            }
-
-            navigateTo('result');
         }
 
         function aksesAdminDenganSandi() {
-            const pin = prompt("Masukkan Kata Sandi / PIN Keamanan Guru Pembimbing SMAN 1 Parepare:");
-            if (pin === "gizi2026" || pin === "admin") {
-                // FIX: Aktifkan area konten utama & sembunyikan halaman login depan
-                document.getElementById("main-content-area").classList.remove("hidden");
-                document.getElementById("page-login").classList.remove("active");
-                
+            const sandi = prompt("Masukkan Kata Sandi / Password Guru:");
+            if (sandi === "gizi123" || sandi === "admin") {
                 navigateTo('admin');
-            } else if (pin !== null) {
+            } else if (sandi !== null) {
                 alert("Kata sandi salah! Akses ditolak.");
             }
         }
 
-        function renderRekapAdmin() {
-            const tbody = document.getElementById("tabel-rekap-body");
-            tbody.innerHTML = "";
+        function startAdminAutoRefresh() {
+            muatDataDariCloud();
+            clearInterval(adminIntervalTimer);
+            adminIntervalTimer = setInterval(muatDataDariCloud, 10000);
+        }
 
-            let localData = JSON.parse(localStorage.getItem("edugizi_scores")) || [];
+        function stopAdminAutoRefresh() {
+            clearInterval(adminIntervalTimer);
+        }
 
-            if (localData.length === 0) {
-                tbody.innerHTML = `<tr><td colspan='7' class='p-8 text-center text-slate-400 font-medium bg-slate-200/30'>Belum ada rekam data nilai siswa yang masuk.</td></tr>`;
-                return;
-            }
+        function muatDataDariCloud() {
+            if (!SCRIPT_URL) return;
+            const statusEl = document.getElementById('db-sync-status');
+            statusEl.innerText = "Memperbarui data...";
 
-            localData.forEach((item, index) => {
-                let progres = item.posttest - item.pretest;
-                let progresBadge = progres > 0 
-                    ? `<span class='text-emerald-600 font-bold'>+${progres}</span>` 
-                    : `<span class='text-slate-400'>${progres}</span>`;
+            fetch(`${SCRIPT_URL}?action=ambilData`)
+            .then(res => res.json())
+            .then(data => {
+                const tbody = document.getElementById('tabel-rekap-body');
+                tbody.innerHTML = "";
 
-                const tr = document.createElement("tr");
-                tr.className = "hover:bg-slate-50 border-b border-slate-100 transition";
-                tr.innerHTML = `
-                    <td class='p-4 font-bold text-slate-400'>${index + 1}</td>
-                    <td class='p-4 font-bold text-slate-800'>${item.nama}</td>
-                    <td class='p-4 text-slate-500'>${item.kelas}</td>
-                    <td class='p-4 text-center text-blue-600 font-bold'>${item.pretest}</td>
-                    <td class='p-4 text-center text-emerald-600 font-bold'>${item.posttest}</td>
-                    <td class='p-4 text-center'>${progresBadge}</td>
-                    <td class='p-4 text-slate-400 font-mono text-[11px]'>${item.timestamp || '-'}</td>
-                `;
-                tbody.appendChild(tr);
+                if (!data || data.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-slate-400">Belum ada data nilai siswa yang terekam.</td></tr>`;
+                } else {
+                    data.forEach((row, idx) => {
+                        const tr = document.createElement('tr');
+                        tr.className = "hover:bg-slate-50/80 transition border-b border-slate-100";
+                        tr.innerHTML = `
+                            <td class="p-4 text-slate-400 font-bold">${idx + 1}</td>
+                            <td class="p-4 font-bold text-slate-900">${row.nama}</td>
+                            <td class="p-4">${row.kelas}</td>
+                            <td class="p-4 text-center font-bold text-blue-600">${row.pretest}</td>
+                            <td class="p-4 text-center font-bold text-emerald-600">${row.posttest}</td>
+                            <td class="p-4 text-center"><span class="px-2 py-0.5 rounded-md font-bold text-[10px] ${row.progres >= 0 ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'}">${row.progres >= 0 ? '+' : ''}${row.progres}</span></td>
+                            <td class="p-4 text-slate-400 text-[10px] font-normal">${row.waktu}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                }
+                statusEl.innerText = "Database Terhubung";
+            })
+            .catch(err => {
+                console.error(err);
+                statusEl.innerText = "Gagal Memuat Cloud";
             });
         }
 
         function eksporDataCSV() {
-            let localData = JSON.parse(localStorage.getItem("edugizi_scores")) || [];
-            if (localData.length === 0) {
-                alert("Tidak ada data untuk diekspor!");
-                return;
-            }
-
-            let csvContent = "sep=;\n";
-            csvContent += "LAPORAN REKAPITULASI DATA NILAI EVALUASI SISWA - EDUGIZI\n";
-            csvContent += "SMA NEGERI 1 PAREPARE\n";
-            csvContent += `Tanggal Cetak: ${new Date().toLocaleString('id-ID')}\n\n`;
-
-            csvContent += "No;Nama Siswa;Kelas;Skor Pre-Test;Skor Post-Test;Progres Poin;Waktu Ujian\n";
-
-            localData.forEach((item, idx) => {
-                let diff = item.posttest - item.pretest;
-                let waktu = item.timestamp ? item.timestamp : "-";
-                let namaBersih = item.nama.replace(/;/g, ",");
-                
-                csvContent += `${idx + 1};"${namaBersih}";"${item.kelas}";${item.pretest};${item.posttest};${diff};"${waktu}"\n`;
-            });
-
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement("a");
-            link.setAttribute("href", url);
-            link.setAttribute("download", `REKAP_NILAI_EDUGIZI_SMAN1_PAREPARE.csv`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+            if (!SCRIPT_URL) return;
+            window.open(`${SCRIPT_URL}?action=eksporCSV`, '_blank');
         }
 
         function bersihkanSemuaData() {
-            if (confirm("Apakah Anda yakin ingin menghapus SELURUH rekap nilai siswa di perangkat ini? Tindakan ini tidak bisa dibatalkan.")) {
-                localStorage.removeItem("edugizi_scores");
-                renderRekapAdmin();
-            }
-        }
-
-        function toggleProfileDropdown(event) {
-            event.stopPropagation();
-            const menu = document.getElementById("profile-dropdown-menu");
-            menu.classList.toggle("hidden");
-        }
-
-        function closeProfileDropdown(event) {
-            const menu = document.getElementById("profile-dropdown-menu");
-            if (menu && !menu.classList.contains("hidden")) {
-                menu.classList.add("hidden");
-            }
-        }
-
-        function handleLogout() {
-            if (confirm("Apakah Anda yakin ingin keluar dari sistem?")) {
-                namaSiswa = "";
-                kelasSiswa = "";
-                nilaiPreTestSiswa = 0;
-                nilaiPostTestSiswa = 0;
-
-                document.getElementById("input-nama").value = "";
-                document.getElementById("input-kelas").selectedIndex = 0;
-
-                document.getElementById("global-navbar").classList.add("hidden");
-                document.getElementById("main-content-area").classList.add("hidden");
-                document.getElementById("page-login").classList.add("active");
-                
-                const sections = document.querySelectorAll(".page-section");
-                sections.forEach(sec => sec.classList.remove("active"));
-                document.getElementById("page-login").classList.add("active");
+            if (confirm("Apakah Anda yakin ingin menghapus seluruh data nilai di Google Sheets? Tindakan ini permanen!")) {
+                const sandi = prompt("Masukkan kunci enkripsi konfirmasi:");
+                if (sandi === "gizi123" || sandi === "admin") {
+                    fetch(SCRIPT_URL, {
+                        method: "POST",
+                        body: JSON.stringify({ action: "resetData" })
+                    }).then(() => {
+                        alert("Database dibersihkan!");
+                        muatDataDariCloud();
+                    });
+                }
             }
         }
     </script>
